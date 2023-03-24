@@ -1,5 +1,11 @@
 <script>
+import CalendarHeader from '@/Layouts/CalendarHeader.vue'
+
 export default {
+  components: {
+    CalendarHeader,
+  },
+
   data() {
     return {
       cur_date: null,
@@ -10,6 +16,7 @@ export default {
       date_board: [],
     }
   },
+
   methods: {
     dateBoard(delta){
       if(delta == -1){
@@ -50,7 +57,8 @@ export default {
       }
     },
   },
-  mounted() {
+
+  created() {
     let date = new Date()
     this.year = date.getFullYear()
     this.month = date.getMonth()
@@ -58,55 +66,70 @@ export default {
     this.cur_date = this.year + '年' + (this.month + 1) + '月' + date.getDate() + '日' + this.dates[date.getDay()] + '曜日'
 
     this.dateBoard(0)
-  }
+  },
 }
 </script>
 
 <template>
-  <button
+
+  <CalendarHeader
+    :date="cur_date"
+    :year="year"
+  ></CalendarHeader>
+
+  <div
+    class="flex text-center my-3"
   >
-    dateboard
-  </button>
-  <div>
-    {{ cur_date }}
+    <div class="flex-grow"></div>
+    <button
+      class="bg-indigo-600 font-semibold text-white py-2 px-10 rounded shadow-lg shadow-indigo-500/50"
+      @click="dateBoard(-1)"
+    >
+      先月
+    </button>
+    <div class="flex-grow"></div>
+    <div
+      class="flex-grow text-5xl font-extrabold text-sky-500"
+    >
+      {{ month+1 }} 月
+    </div>
+    <div class="flex-grow"></div>
+    <button
+      class="bg-indigo-600 font-semibold text-white py-2 px-10 rounded shadow-lg shadow-indigo-500/50"
+      @click="dateBoard(1)"
+    >
+      来月
+    </button>
+    <div class="flex-grow"></div>
   </div>
-  <div>
-    {{ year }}
-  </div>
-  <div>
-    {{ month+1 }}
+  <div class="py-3">
+    <table
+      class="border-collapse border border-slate-500 w-full"
+    >
+      <thead>
+        <tr>
+          <template v-for="date in dates">
+            <th
+              class="border border-slate-600 h-8"
+            >{{ date }}</th>
+          </template>
+        </tr>
+      </thead>
+      <tbody
+        :key="year+' '+month"
+      >
+        <tr
+          v-for="(week, w_idx) in date_board"
+          :key="w_idx"
+        >
+          <td
+            class="border border-slate-700 h-15 text-right pr-4 pb-10"
+            v-for="(day, d_idx) in week"
+            :key="d_idx"
+          >{{ day }}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
-  <table>
-    <thead>
-      <tr>
-        <template v-for="date in dates">
-          <th>{{ date }}</th>
-        </template>
-      </tr>
-    </thead>
-    <tbody
-      :key="year+' '+month"
-    >
-      <tr
-        v-for="(week, w_idx) in date_board"
-        :key="w_idx"
-      >
-        <td
-          v-for="(day, d_idx) in week"
-          :key="d_idx"
-        >{{ day }}</td>
-      </tr>
-    </tbody>
-  </table>
-  <button
-    @click="dateBoard(-1)"
-  >
-    先月
-  </button>&nbsp;&nbsp;
-  <button
-    @click="dateBoard(1)"
-  >
-    来月
-  </button>
 </template>
