@@ -43,4 +43,5 @@ Route::prefix('example')->name('example.')->group(function () {
 Route::prefix('calendar')->name('calendar.')->group(function () {
     Route::get('main', [CalendarController::class, 'main'])->name('main');
     Route::get('dateBoard', [CalendarController::class, 'dateBoard'])->name('dateBoard');
+    Route::post('eventUpdate', [CalendarController::class, 'eventUpdate'])->name('eventUpdate');
 });

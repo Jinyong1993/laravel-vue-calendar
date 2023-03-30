@@ -58,4 +58,25 @@ class CalendarController extends Controller
         }
         return $query;
     }
+
+    public function eventUpdate(Request $request)
+    {
+        $event = Event::find($request->event_id);
+
+        if(!$event){
+            return;
+        }
+
+        $event->update([
+            'title' => $request->title,
+            'text' => $request->text,
+            'date_from' => $request->date_from,
+            'date_to' => $request->date_to,
+            'tag_id' => $request->tag_id,
+            'user_id' => auth()->user()->id,
+            'updated_at' => date('Y-m-d H:i:s'),
+        ]);
+
+        return ['result' => true];
+    }
 }
