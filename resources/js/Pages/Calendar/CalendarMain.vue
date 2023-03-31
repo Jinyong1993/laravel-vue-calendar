@@ -38,12 +38,20 @@ export default {
           myColorSettingDialog: false,
       },
 
-      eventDialogData: null,
+      eventDialogData: {
+        event_id: null,
+        title: null,
+        text: null,
+        date_from: null,
+        date_to: null,
+        tag_id: null,
+      },
 
       path: mdiPlusCircle,
       //key: 0,
 
       myColorDialogData: {
+        tag_id: null,
         tag_name: null,
         tag_note: null,
         tag_color: null,
@@ -157,7 +165,12 @@ export default {
     },
 
     myColorConfirm(){
-      axios.post(route('calendar.colorUpdate'), this.myColorDialogData,
+      axios.post(route('calendar.colorUpdate'), {
+        tag_id: this.myColorDialogData.tag_id.tag_id,
+        tag_name: this.myColorDialogData.tag_name,
+        tag_note: this.myColorDialogData.tag_note,
+        tag_color: this.myColorDialogData.tag_color,
+      },
       {
         headers: {
           'Content-Type': 'application/json'
@@ -179,7 +192,6 @@ export default {
         }
       }).then((response) => {
         this.myColorQuery = response.data
-        console.log(this.myColorQuery)
       }).catch((error) => {
         this.active.progressDialog = false
         console.log(error)
@@ -200,9 +212,16 @@ export default {
     },
 
     openMyColorSettingDialog(){
-      this.eventDialogData.tag_id = null
+      this.eventDialogData = {
+        tag_id: null,
+        tag_name: null,
+        tag_note: null,
+        tag_color: null,
+      }
+
       this.active.myColorSettingDialog = true
     },
+
   },
   created() {
     let date = new Date()
@@ -397,6 +416,7 @@ export default {
             :enable-time-picker="false"
             now-button-label="本日"
             :esc-close="true"
+            teleport-center
           ></VueDatePicker>
           <span>&nbsp;~&nbsp;</span>
           <VueDatePicker
@@ -409,6 +429,7 @@ export default {
             required
             :enable-time-picker="false"
             :esc-close="true"
+            teleport-center
           ></VueDatePicker>
         </div>
         <div
@@ -498,6 +519,7 @@ export default {
             :enable-time-picker="false"
             now-button-label="本日"
             :esc-close="true"
+            teleport-center
           ></VueDatePicker>
           <span>&nbsp;~&nbsp;</span>
           <VueDatePicker
@@ -510,15 +532,8 @@ export default {
             required
             :enable-time-picker="false"
             :esc-close="true"
+            teleport-center
           ></VueDatePicker>
-        </div>
-        <div
-          class="px-20 py-5"
-        >
-          <!-- <v-color-picker
-            v-model="eventDialogData.tag_color"
-            elevation="5"
-          ></v-color-picker> -->
         </div>
         <div
           class="mt-5"
@@ -597,7 +612,7 @@ export default {
         ></v-textarea>
         <div>
           <v-select
-            v-model="eventDialogData.tag_id"
+            v-model="myColorDialogData.tag_id"
             :items="myColorQuery"
             label="マイカラー設定"
             item-title="tag_name"
