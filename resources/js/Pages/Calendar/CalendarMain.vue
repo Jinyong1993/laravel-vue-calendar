@@ -478,19 +478,19 @@ export default {
           </v-btn>
           <v-spacer></v-spacer>
           <v-btn
-            color="green-darken-1"
-            variant="text"
-            @click="eventConfirm"
-          >
-            確定
-          </v-btn>
-          <v-spacer></v-spacer>
-          <v-btn
             color="red-darken-1"
             variant="text"
             @click="eventDelete"
           >
             削除
+          </v-btn>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="green-darken-1"
+            variant="text"
+            @click="eventConfirm"
+          >
+            確定
           </v-btn>
           <v-spacer></v-spacer>
         </v-card-actions>
