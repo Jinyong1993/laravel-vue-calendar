@@ -1,8 +1,12 @@
 <script>
 import CalendarHeader from '@/Layouts/CalendarHeader.vue'
 import axios from 'axios'
-import VueDatePicker from '@vuepic/vue-datepicker';
+import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
+import SvgIcon from '@jamescoyle/vue-icon'
+import { mdiPlusCircle } from '@mdi/js'
+import {circliful} from 'js-plugin-circliful'
+import 'js-plugin-circliful/dist/main.css'
 
 export default {
   props: {
@@ -12,6 +16,7 @@ export default {
   components: {
     CalendarHeader,
     VueDatePicker,
+    SvgIcon,
   },
 
   data() {
@@ -22,23 +27,36 @@ export default {
       day: null,
       dates: ["日", "月", "火", "水", "木", "金", "土"],
       date_board: [],
+
       query: [],
+      myColorQuery: [],
+
       active: {
           eventDialog: false,
+          plusDialog: false,
+          progressDialog: false,
+          myColorSettingDialog: false,
       },
-      eventDialogData: {
-          title: null,
-          text: null,
-          date_from: null,
-          date_to: null,
-          tag_color: null,
-      }
+
+      eventDialogData: null,
+
+      path: mdiPlusCircle,
+      //key: 0,
+
+      myColorDialogData: {
+        tag_name: null,
+        tag_note: null,
+        tag_color: null,
+      },
     }
   },
 
   methods: {
-    getDateBoard(delta){
+    getDateBoard(delta, not_refresh){
+      this.active.progressDialog = true
+      if(!not_refresh) {
         this.dateBoard(delta)
+      }
       axios.get(route('calendar.dateBoard'),{
         params: {
             year: this.year,
@@ -49,9 +67,14 @@ export default {
           'Content-Type': 'application/json'
         }
       }).then((response) => {
+        this.active.progressDialog = false
         this.query = response.data
+      }).catch((error) => {
+        this.active.progressDialog = false
+        console.log(error)
       })
     },
+
     dateBoard(delta){
       if(delta == -1){
         this.month -= 1
@@ -94,30 +117,93 @@ export default {
         }
       }
     },
+
     openEventDialog(event){
       this.eventDialogData = event
-    //   this.eventDialogData.title = event.title
-    //   this.eventDialogData.text = event.text
-    //   this.eventDialogData.date_from = event.date_from
-    //   this.eventDialogData.date_to = event.date_to
-    //   this.eventDialogData.tag_color = event.tag_color
+
+      /* >> this.eventDialogData = event <<
+      this.eventDialogData.title = event.title
+      this.eventDialogData.text = event.text
+      this.eventDialogData.date_from = event.date_from
+      this.eventDialogData.date_to = event.date_to
+      this.eventDialogData.tag_color = event.tag_color
+      */
+
       this.active.eventDialog = true
     },
+
     eventConfirm(){
-      axios.post(route('calendar.eventUpdate'), this.eventDialogData, 
+      axios.post(route('calendar.eventUpdate'), {
+        event_id: this.eventDialogData.event_id,
+        title: this.eventDialogData.title,
+        text: this.eventDialogData.text,
+        date_from: this.eventDialogData.date_from,
+        date_to: this.eventDialogData.date_to,
+        tag_id: this.eventDialogData.tag_id.tag_id,
+      },
       {
         headers: {
           'Content-Type': 'application/json'
         }
       }).then((response) => {
-        console.log('ddddddddd')
         this.active.eventDialog = false
-      }).catch(function (error) {
-        
-      });
-    }
-  },
+        this.active.plusDialog = false
 
+        this.getDateBoard(0, true)
+
+      }).catch(function (error) {
+
+      });
+    },
+
+    myColorConfirm(){
+      axios.post(route('calendar.colorUpdate'), this.myColorDialogData,
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then((response) => {
+        this.active.myColorSettingDialog = false
+
+        this.getDateBoard(0, true)
+      }).catch(function (error) {
+        console.log(error)
+      });
+    },
+
+    getMyColor(){
+      axios.get(route('calendar.myColor'),{
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then((response) => {
+        this.myColorQuery = response.data
+        console.log(this.myColorQuery)
+      }).catch((error) => {
+        this.active.progressDialog = false
+        console.log(error)
+      })
+    },
+
+    openPlusDialog(day){
+      this.eventDialogData = {
+        event_id:null,
+        title:null,
+        text:null,
+        date_from:this.year + '-' + (this.month+1) + '-' + day,
+        date_to:null,
+        tag_id:null,
+      }
+
+      this.active.plusDialog = true
+    },
+
+    openMyColorSettingDialog(){
+      this.eventDialogData.tag_id = null
+      this.active.myColorSettingDialog = true
+    },
+  },
   created() {
     let date = new Date()
     this.year = date.getFullYear()
@@ -126,6 +212,7 @@ export default {
     this.cur_date = this.year + '年' + (this.month + 1) + '月' + date.getDate() + '日' + this.dates[date.getDay()] + '曜日'
 
     this.getDateBoard(0)
+    this.getMyColor()
   },
 }
 </script>
@@ -135,7 +222,6 @@ export default {
     :cur_date="cur_date"
     :year="year"
   ></CalendarHeader>
-
   <div
     class="flex text-center my-10"
   >
@@ -181,10 +267,32 @@ export default {
         >
           <td
             class="border border-slate-700 h-15 text-right pr-4 pb-10"
+            style="vertical-align: top;"
             v-for="(day, d_idx) in week"
             :key="d_idx"
           >
-            {{ day.day }}
+          <template
+            v-if="day.day"
+          >
+            <div
+              class="flex"
+            >
+              <div>
+                <v-btn
+                  color="green"
+                  variant="text"
+                  @click="openPlusDialog(day.day)"
+                ><svg-icon type="mdi" :path="path"></svg-icon>
+                </v-btn>
+              </div>
+              <div class="flex-grow"></div>
+              <div
+                class="mt-1"
+              >
+                  {{ day.day }}
+              </div>
+            </div>
+          </template>
             <div
               v-if="query[day.day]"
             >
@@ -193,47 +301,189 @@ export default {
                 :key="event.event_id"
               >
                 <button
-                  class="bg-indigo-600 font-semibold text-white py-1 px-1 rounded"
+                  class="bg-indigo-600 font-semibold text-white py-1 px-2 my-1 rounded"
                   :style="{backgroundColor: event.tag_color}"
                   @click="openEventDialog(event)"
                 >
                   {{ event.title }}
-                </button>
+                </button><br>
               </template>
             </div>
           </td>
         </tr>
       </tbody>
     </table>
+    <div
+     class="flex my-3 py-5 px-5"
+    >
+      <button
+        class="bg-emerald-500 font-semibold text-white py-4 px-4 rounded"
+        @click="openMyColorSettingDialog"
+      >
+        マイカラー設定
+      </button>
+    </div>
   </div>
 
-  <!-- ボタンダイアログ -->
+  <!-- イベント設定ダイアログ -->
   <v-row justify="center">
     <v-dialog
       v-model="active.eventDialog"
       persistent
       width="500px"
-      height="1000px"
     >
       <v-card
        class="px-5"
       >
-        <v-card-title
-          class="text-h5 my-2"
+        <div
+          class="flex justify-between"
         >
-          タグ設定
-        </v-card-title>
+          <div
+            class="text-h5 my-2"
+          >
+            <v-card-title>
+              イベント設定
+            </v-card-title>
+          </div>
+          <div
+            class="text-h5 my-2"
+          >
+            <v-card-title
+              v-if="eventDialogData.tag_name"
+            >
+              <v-btn
+                elevation="2"
+              >
+                {{ eventDialogData.tag_name }}
+              </v-btn>
+            </v-card-title>
+          </div>
+        </div>
         <v-text-field
           v-model="eventDialogData.title"
           label="タイトル"
           hide-details="auto"
+          required
         ></v-text-field>
         <hr>
         <v-textarea
           v-model="eventDialogData.text"
           label="内容"
+          required
         ></v-textarea>
-        <div 
+        <div>
+          <v-select
+            v-model="eventDialogData.tag_id"
+            :items="myColorQuery"
+            label="マイカラー設定"
+            item-title="tag_name"
+            item-value="tag_id"
+            return-object
+          >
+        </v-select>
+        </div>
+        <div
+          class="flex justify-between"
+        >
+          <VueDatePicker
+            v-model="eventDialogData.date_from"
+            :month-change-on-scroll="false"
+            model-type="yyyy-MM-dd"
+            :format="eventDialogData.date_from"
+            auto-apply
+            placeholder="日付を選択する"
+            show-now-button
+            required
+            :enable-time-picker="false"
+            now-button-label="本日"
+            :esc-close="true"
+          ></VueDatePicker>
+          <span>&nbsp;~&nbsp;</span>
+          <VueDatePicker
+            v-model="eventDialogData.date_to"
+            :month-change-on-scroll="false"
+            model-type="yyyy-MM-dd"
+            :format="eventDialogData.date_to"
+            auto-apply
+            placeholder="日付を選択する"
+            required
+            :enable-time-picker="false"
+            :esc-close="true"
+          ></VueDatePicker>
+        </div>
+        <div
+          class="mt-5"
+        >
+          <hr>
+        </div>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="grey-darken-5"
+            variant="text"
+            @click="active.eventDialog = false"
+          >
+            閉じる
+          </v-btn>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="green-darken-1"
+            variant="text"
+            @click="eventConfirm"
+          >
+            確定
+          </v-btn>
+          <v-spacer></v-spacer>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-row>
+
+  <!-- プラス、イベント追加ダイアログ -->
+  <v-row justify="center">
+    <v-dialog
+      v-model="active.plusDialog"
+      persistent
+      width="500px"
+    >
+      <v-card
+       class="px-5"
+      >
+        <div
+          class="flex justify-between"
+        >
+          <div
+            class="text-h5 my-2"
+          >
+            <v-card-title>
+              イベント追加
+            </v-card-title>
+          </div>
+        </div>
+        <v-text-field
+          v-model="eventDialogData.title"
+          label="タイトル"
+          hide-details="auto"
+          required
+        ></v-text-field>
+        <hr>
+        <v-textarea
+          v-model="eventDialogData.text"
+          label="内容"
+          required
+        ></v-textarea>
+        <div>
+          <v-select
+            v-model="eventDialogData.tag_id"
+            :items="myColorQuery"
+            label="マイカラー設定"
+            item-title="tag_name"
+            item-value="tag_id"
+            return-object
+          >
+        </v-select>
+        </div>
+        <div
           class="flex justify-between"
         >
           <VueDatePicker
@@ -265,23 +515,22 @@ export default {
         <div
           class="px-20 py-5"
         >
-          <v-color-picker
+          <!-- <v-color-picker
             v-model="eventDialogData.tag_color"
             elevation="5"
-          ></v-color-picker>
+          ></v-color-picker> -->
         </div>
-        <p 
-          v-if="eventDialogData.tag_color"
+        <div
+          class="mt-5"
         >
-          {{ eventDialogData.tag_color }}
-        </p>
-        <hr>
+          <hr>
+        </div>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn
             color="grey-darken-5"
             variant="text"
-            @click="active.eventDialog = false"
+            @click="active.plusDialog = false"
           >
             閉じる
           </v-btn>
@@ -299,4 +548,100 @@ export default {
     </v-dialog>
   </v-row>
 
+  <!-- プログレスダイアログ -->
+  <v-row justify="center">
+    <v-dialog
+      v-model="active.progressDialog"
+    >
+      <div class="text-center">
+        <v-progress-circular
+          indeterminate
+          color="primary"
+        ></v-progress-circular>
+      </div>
+    </v-dialog>
+  </v-row>
+
+  <!-- マイカラー設定ダイアログ -->
+  <v-row justify="center">
+    <v-dialog
+      v-model="active.myColorSettingDialog"
+      persistent
+      width="500px"
+    >
+      <v-card
+       class="px-5"
+      >
+        <div
+          class="flex justify-between"
+        >
+          <div
+            class="text-h5 my-2"
+          >
+            <v-card-title>
+              マイカラー設定
+            </v-card-title>
+          </div>
+        </div>
+        <v-text-field
+          v-model="myColorDialogData.tag_name"
+          label="カラー名"
+          hide-details="auto"
+          required
+        ></v-text-field>
+        <hr>
+        <v-textarea
+          v-model="myColorDialogData.tag_note"
+          label="カラー説明"
+          required
+        ></v-textarea>
+        <div>
+          <v-select
+            v-model="eventDialogData.tag_id"
+            :items="myColorQuery"
+            label="マイカラー設定"
+            item-title="tag_name"
+            item-value="tag_id"
+            return-object
+          >
+          </v-select>
+        </div>
+        <div
+          class="px-20 py-5"
+        >
+          <v-color-picker
+            v-model="myColorDialogData.tag_color"
+            elevation="5"
+          ></v-color-picker>
+        </div>
+        <div>
+          {{ myColorDialogData.tag_color }}
+        </div>
+        <div
+          class="mt-5"
+        >
+          <hr>
+        </div>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="grey-darken-5"
+            variant="text"
+            @click="active.myColorSettingDialog = false"
+          >
+            閉じる
+          </v-btn>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="green-darken-1"
+            variant="text"
+            @click="myColorConfirm"
+          >
+            確定
+          </v-btn>
+          <v-spacer></v-spacer>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-row>
 </template>

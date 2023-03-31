@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Event;
+use App\Models\Tag;
 
 class CalendarController extends Controller
 {
@@ -30,7 +31,7 @@ class CalendarController extends Controller
                         ->where('event.date_from', '<=', $last_date)
                         ->where('event.date_to', '>=', $first_date)
                         ->leftjoin('tag', 'tag.tag_id', '=', 'event.tag_id')
-                        ->select('event.*', 'tag.tag_id', 'tag.tag_color')
+                        ->select('event.*', 'tag.tag_id', 'tag.tag_color', 'tag.tag_name')
                         ->get();
 
         foreach($selects as $select){
@@ -61,22 +62,71 @@ class CalendarController extends Controller
 
     public function eventUpdate(Request $request)
     {
-        $event = Event::find($request->event_id);
+        if(!$request->event_id){
+            $event = new Event();
 
-        if(!$event){
-            return;
+            $event->title = $request->title;
+            $event->text = $request->text;
+            $event->date_from = $request->date_from;
+            $event->date_to = $request->date_to;
+            $event->user_id = auth()->user()->id;
+            $event->tag_id = $request->tag_id ?? 0;
+            $event->updated_at = date('Y-m-d H:i:s');
+            $event->created_at = date('Y-m-d H:i:s');
+
+            $event->save();
+        } else {
+            $event = Event::find($request->event_id);
+
+            $event->update([
+                'title' => $request->title,
+                'text' => $request->text,
+                'date_from' => $request->date_from,
+                'date_to' => $request->date_to,
+                'tag_id' => $request->tag_id,
+                'user_id' => auth()->user()->id,
+                'updated_at' => date('Y-m-d H:i:s'),
+            ]);
         }
 
-        $event->update([
-            'title' => $request->title,
-            'text' => $request->text,
-            'date_from' => $request->date_from,
-            'date_to' => $request->date_to,
-            'tag_id' => $request->tag_id,
-            'user_id' => auth()->user()->id,
-            'updated_at' => date('Y-m-d H:i:s'),
-        ]);
+        return ['result' => true];
+    }
+
+    public function colorUpdate(Request $request)
+    {
+        if(!$request->tag_id){
+            $tag = new Tag();
+
+            $tag->tag_name = $request->tag_name;
+            $tag->tag_note = $request->tag_note;
+            $tag->tag_color = $request->tag_color;
+            $tag->user_id = auth()->user()->id;
+            $tag->updated_at = date('Y-m-d H:i:s');
+            $tag->created_at = date('Y-m-d H:i:s');
+
+            $tag->save();
+        } else {
+            $tag = Tag::find($request->tag_id);
+
+            $tag->update([
+                'tag_name' => $request->tag_name,
+                'tag_note' => $request->tag_note,
+                'tag_color' => $request->tag_color,
+                'tag_id' => $request->tag_id,
+                'user_id' => auth()->user()->id,
+                'updated_at' => date('Y-m-d H:i:s'),
+            ]);
+        }
 
         return ['result' => true];
+    }
+
+    public function myColor(Request $request)
+    {
+        $query = Tag::select('tag.*')
+        ->where('tag.user_id', auth()->user()->id)
+        ->get()->all();
+
+        return $query;
     }
 }
