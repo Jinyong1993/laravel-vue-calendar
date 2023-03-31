@@ -45,5 +45,6 @@ Route::prefix('calendar')->name('calendar.')->group(function () {
     Route::get('dateBoard', [CalendarController::class, 'dateBoard'])->name('dateBoard');
     Route::get('myColor', [CalendarController::class, 'myColor'])->name('myColor');
     Route::post('eventUpdate', [CalendarController::class, 'eventUpdate'])->name('eventUpdate');
+    Route::post('eventDelete', [CalendarController::class, 'eventDelete'])->name('eventDelete');
     Route::post('colorUpdate', [CalendarController::class, 'colorUpdate'])->name('colorUpdate');
 });

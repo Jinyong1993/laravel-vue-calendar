@@ -164,9 +164,32 @@ export default {
       });
     },
 
+    eventDelete(){
+      axios.post(route('calendar.eventDelete'), {
+        event_id: this.eventDialogData.event_id,
+        title: this.eventDialogData.title,
+        text: this.eventDialogData.text,
+        date_from: this.eventDialogData.date_from,
+        date_to: this.eventDialogData.date_to,
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then((response) => {
+        this.active.eventDialog = false
+        this.active.plusDialog = false
+
+        this.getDateBoard(0, true)
+
+      }).catch(function (error) {
+
+      });
+    },
+
     myColorConfirm(){
       axios.post(route('calendar.colorUpdate'), {
-        tag_id: this.myColorDialogData.tag_id.tag_id,
+        tag_id: this.myColorDialogData.tag_id,
         tag_name: this.myColorDialogData.tag_name,
         tag_note: this.myColorDialogData.tag_note,
         tag_color: this.myColorDialogData.tag_color,
@@ -220,6 +243,13 @@ export default {
       }
 
       this.active.myColorSettingDialog = true
+    },
+
+    myColorChange(event){
+      this.myColorDialogData.tag_id = event.tag_id
+      this.myColorDialogData.tag_name = event.tag_name
+      this.myColorDialogData.tag_note = event.tag_note
+      this.myColorDialogData.tag_color = event.tag_color
     },
 
   },
@@ -455,6 +485,14 @@ export default {
             確定
           </v-btn>
           <v-spacer></v-spacer>
+          <v-btn
+            color="red-darken-1"
+            variant="text"
+            @click="eventDelete"
+          >
+            削除
+          </v-btn>
+          <v-spacer></v-spacer>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -618,6 +656,7 @@ export default {
             item-title="tag_name"
             item-value="tag_id"
             return-object
+            @update:modelValue="myColorChange(myColorDialogData.tag_id)"
           >
           </v-select>
         </div>
