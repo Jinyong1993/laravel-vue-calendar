@@ -147,7 +147,7 @@ export default {
         text: this.eventDialogData.text,
         date_from: this.eventDialogData.date_from,
         date_to: this.eventDialogData.date_to,
-        tag_id: this.eventDialogData.tag_id.tag_id,
+        tag_id: this.eventDialogData.tag_id,
       },
       {
         headers: {
@@ -256,7 +256,7 @@ export default {
     },
 
     openMyColorSettingDialog(){
-      this.eventDialogData = {
+      this.myColorDialogData = {
         tag_id: null,
         tag_name: null,
         tag_note: null,
@@ -266,12 +266,12 @@ export default {
       this.active.myColorSettingDialog = true
     },
 
-    myColorChange(event){
-      this.myColorDialogData.tag_id = event.tag_id
-      this.myColorDialogData.tag_name = event.tag_name
-      this.myColorDialogData.tag_note = event.tag_note
-      this.myColorDialogData.tag_color = event.tag_color
-    },
+    // myColorChange(event){
+    //   this.myColorDialogData.tag_id = event.tag_id
+    //   this.myColorDialogData.tag_name = event.tag_name
+    //   this.myColorDialogData.tag_note = event.tag_note
+    //   this.myColorDialogData.tag_color = event.tag_color
+    // },
 
   },
   created() {
@@ -359,7 +359,7 @@ export default {
               <div
                 class="mt-1"
               >
-                  {{ day.day }}
+                {{ day.day }}
               </div>
             </div>
           </template>
@@ -448,7 +448,6 @@ export default {
             label="マイカラー設定"
             item-title="tag_name"
             item-value="tag_id"
-            return-object
           >
         </v-select>
         </div>
@@ -559,7 +558,6 @@ export default {
             label="マイカラー設定"
             item-title="tag_name"
             item-value="tag_id"
-            return-object
           >
         </v-select>
         </div>
@@ -671,13 +669,12 @@ export default {
         ></v-textarea>
         <div>
           <v-select
-            v-model="myColorDialogData.tag_id"
+            v-model="myColorDialogData"
             :items="myColorQuery"
             label="マイカラー設定"
             item-title="tag_name"
             item-value="tag_id"
             return-object
-            @update:modelValue="myColorChange(myColorDialogData.tag_id)"
           >
           </v-select>
         </div>
