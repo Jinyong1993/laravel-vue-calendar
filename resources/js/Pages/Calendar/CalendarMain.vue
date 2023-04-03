@@ -202,7 +202,7 @@ export default {
         this.active.myColorSettingDialog = false
 
         this.getDateBoard(0, true)
-
+        this.getMyColor()
       }).catch(function (error) {
 
       });
@@ -223,6 +223,7 @@ export default {
         this.active.myColorSettingDialog = false
 
         this.getDateBoard(0, true)
+        this.getMyColor()
       }).catch(function (error) {
         console.log(error)
       });
@@ -559,7 +560,7 @@ export default {
             item-title="tag_name"
             item-value="tag_id"
           >
-        </v-select>
+          </v-select>
         </div>
         <div
           class="flex justify-between"
