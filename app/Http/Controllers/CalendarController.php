@@ -132,6 +132,17 @@ class CalendarController extends Controller
         return ['result' => true];
     }
 
+    public function colorDelete(Request $request)
+    {
+        if(!$request->tag_id){
+            return ['result' => false];
+        }
+
+        Tag::find($request->tag_id)->delete();
+
+        return ['result' => true];
+    }
+
     public function myColor(Request $request)
     {
         $query = Tag::select('tag.*')

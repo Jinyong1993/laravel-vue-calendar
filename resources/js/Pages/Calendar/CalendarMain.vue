@@ -187,6 +187,27 @@ export default {
       });
     },
 
+    myColorDelete(){
+      axios.post(route('calendar.colorDelete'), {
+        tag_id: this.myColorDialogData.tag_id,
+        tag_name: this.myColorDialogData.tag_name,
+        tag_note: this.myColorDialogData.tag_note,
+        tag_color: this.myColorDialogData.tag_color,
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then((response) => {
+        this.active.myColorSettingDialog = false
+
+        this.getDateBoard(0, true)
+
+      }).catch(function (error) {
+
+      });
+    },
+
     myColorConfirm(){
       axios.post(route('calendar.colorUpdate'), {
         tag_id: this.myColorDialogData.tag_id,
@@ -684,6 +705,14 @@ export default {
             @click="active.myColorSettingDialog = false"
           >
             閉じる
+          </v-btn>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="red-darken-1"
+            variant="text"
+            @click="myColorDelete"
+          >
+            削除
           </v-btn>
           <v-spacer></v-spacer>
           <v-btn
