@@ -151,4 +151,14 @@ class CalendarController extends Controller
 
         return $query;
     }
+
+    public function searchEvent(Request $request)
+    {
+        $q = Event::select('event.*')
+        ->where('event.user_id', auth()->user()->id)
+        // ->where('event.title', 'LIKE', '%'.$request->search_title.'%')
+        ->get()->all();
+
+        return $q;
+    }
 }

@@ -1,5 +1,6 @@
 <script>
 import CalendarHeader from '@/Layouts/CalendarHeader.vue'
+import SearchDialog from './CalendarSearchDialog.vue'
 import axios from 'axios'
 import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
@@ -15,6 +16,7 @@ export default {
 
   components: {
     CalendarHeader,
+    SearchDialog,
     VueDatePicker,
     SvgIcon,
   },
@@ -274,6 +276,9 @@ export default {
     //   this.myColorDialogData.tag_color = event.tag_color
     // },
 
+    openSearchDialog(){
+      this.$refs.dialogSearch.searchDialog = true
+    },
   },
   created() {
     let date = new Date()
@@ -293,6 +298,11 @@ export default {
     :cur_date="cur_date"
     :year="year"
   ></CalendarHeader>
+
+  <SearchDialog
+    ref="dialogSearch"
+  ></SearchDialog>
+
   <div
     class="flex text-center my-10"
   >
@@ -387,12 +397,22 @@ export default {
     <div
      class="flex my-3 py-5 px-5"
     >
-      <button
-        class="bg-emerald-500 font-semibold text-white py-4 px-4 rounded"
-        @click="openMyColorSettingDialog"
-      >
-        マイカラー設定
-      </button>
+      <div>
+        <button
+          class="bg-emerald-500 font-semibold text-white py-4 px-4 rounded"
+          @click="openMyColorSettingDialog"
+        >
+          マイカラー設定
+        </button>
+      </div>
+      <div>
+        <button
+          class="bg-emerald-500 font-semibold text-white py-4 px-4 mx-5 rounded"
+          @click="openSearchDialog"
+        >
+          イベント検索
+        </button>
+      </div>
     </div>
   </div>
 
