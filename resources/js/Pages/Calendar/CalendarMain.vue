@@ -12,6 +12,7 @@ import 'js-plugin-circliful/dist/main.css'
 export default {
   props: {
     date_board_query: Array,
+    is_list: Boolean,
   },
 
   components: {
@@ -394,7 +395,9 @@ export default {
               <div
                 class="flex"
               >
-                <div>
+                <div
+                  v-if="!is_list"
+                >
                   <v-btn
                     color="green"
                     variant="text"
@@ -418,14 +421,28 @@ export default {
                 :key="event.event_id"
                 v-show="!event.hidden"
               >
-                <button
-                  :id="event.tag_id"
-                  class="bg-indigo-600 font-semibold text-white py-1 px-2 my-1 rounded"
-                  :style="{backgroundColor: event.tag_color}"
-                  @click="openEventDialog(event)"
+                <template
+                  v-if="is_list"
                 >
-                  {{ event.title }}
-                </button>
+                  <button
+                    class="bg-indigo-600 font-semibold text-white py-1 px-2 my-1 rounded"
+                    :style="{backgroundColor: event.tag_color}"
+                  >
+                    {{ event.title }}
+                  </button>
+                </template>
+                <template
+                 v-else
+                >
+                  <button
+                    :id="event.tag_id"
+                    class="bg-indigo-600 font-semibold text-white py-1 px-2 my-1 rounded"
+                    :style="{backgroundColor: event.tag_color}"
+                    @click="openEventDialog(event)"
+                  >
+                    {{ event.title }}
+                  </button>
+                </template>
               </div>
             </template>
           </td>
@@ -435,21 +452,53 @@ export default {
     <div
      class="flex my-3 py-5 px-5"
     >
-      <div>
+      <div
+        v-if="!is_list"
+      >
         <button
-          class="bg-emerald-500 font-semibold text-white py-4 px-4 rounded"
+          class="bg-emerald-500 font-semibold text-white py-4 px-4 mx-5 rounded"
           @click="openMyColorSettingDialog"
         >
           マイカラー設定
         </button>
       </div>
-      <div>
+      <div
+        v-if="!is_list"
+      >
         <button
           class="bg-emerald-500 font-semibold text-white py-4 px-4 mx-5 rounded"
           @click="openSearchDialog"
         >
           イベント検索
         </button>
+      </div>
+      <div>
+        <template
+          v-if="!is_list"
+        >
+          <inertia-link
+            :href="route('calendar.calendarList')"
+          >
+            <button
+              class="bg-emerald-500 font-semibold text-white py-4 px-4 mx-5 rounded"
+            >
+              カレンダー閲覧
+            </button>
+          </inertia-link>
+        </template>
+        <template
+          v-else
+        >
+          <inertia-link
+            :href="route('calendar.main')"
+          >
+            <button
+              class="bg-emerald-500 font-semibold text-white py-4 px-4 mx-5 rounded"
+            >
+              カレンダー編集
+            </button>
+          </inertia-link>
+        </template>
       </div>
     </div>
   </div>

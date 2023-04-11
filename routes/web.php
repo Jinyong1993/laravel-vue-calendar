@@ -42,6 +42,7 @@ Route::prefix('example')->name('example.')->group(function () {
 
 Route::prefix('calendar')->name('calendar.')->group(function () {
     Route::get('main', [CalendarController::class, 'main'])->name('main');
+    Route::get('calendarList', [CalendarController::class, 'calendarList'])->name('calendarList');
     Route::get('dateBoard', [CalendarController::class, 'dateBoard'])->name('dateBoard');
     Route::get('myColor', [CalendarController::class, 'myColor'])->name('myColor');
     Route::get('searchEvent', [CalendarController::class, 'searchEvent'])->name('searchEvent');

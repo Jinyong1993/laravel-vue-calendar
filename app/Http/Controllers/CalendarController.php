@@ -14,6 +14,13 @@ class CalendarController extends Controller
         return Inertia::render('Calendar/CalendarMain');
     }
 
+    public function calendarList()
+    {
+        return Inertia::render('Calendar/CalendarList', [
+            'is_list' => true,
+        ]);
+    }
+
     public function dateBoard(Request $request)
     {
         $year = $request->year ?? date('Y');
