@@ -49,6 +49,15 @@ export default {
         tag_id: null,
       },
 
+      tagData: {
+        event_id: null,
+        title: null,
+        text: null,
+        date_from: null,
+        date_to: null,
+        tag_id: null,
+      },
+
       path: mdiPlusCircle,
       //key: 0,
 
@@ -280,6 +289,20 @@ export default {
       this.$refs.dialogSearch.search_title = null
       this.$refs.dialogSearch.searchDialog = true
     },
+
+    tagToggle(tag_id){
+      Object.keys(this.query).forEach(key => {
+        this.query[key].forEach(element => {
+          if(tag_id.includes(element.tag_id)){
+            element.hidden = 0
+          } else if(tag_id.length == 0){
+            element.hidden = 0
+          } else {
+            element.hidden = 1
+          }
+        })
+      })
+    },
   },
   created() {
     let date = new Date()
@@ -304,14 +327,17 @@ export default {
     ref="dialogSearch"
   ></SearchDialog>
 
-  <div class="mt-10">
+  <div class="mt-8">
     <v-select
-      v-model="eventDialogData.tag_id"
+      v-model="tagData.tag_id"
       :items="myColorQuery"
-      label="マイカラー設定"
+      label="マイカラー"
       item-title="tag_name"
       item-value="tag_id"
-    ></v-select>
+      multiple
+      @update:modelValue="tagToggle(tagData.tag_id)"
+    >
+    </v-select>
   </div>
   <div
     class="flex text-center mb-7"
@@ -362,44 +388,46 @@ export default {
             v-for="(day, d_idx) in week"
             :key="d_idx"
           >
-          <template
-            v-if="day.day"
-          >
-            <div
-              class="flex"
+            <template
+              v-if="day.day"
             >
-              <div>
-                <v-btn
-                  color="green"
-                  variant="text"
-                  @click="openPlusDialog(day.day)"
-                ><svg-icon type="mdi" :path="path"></svg-icon>
-                </v-btn>
-              </div>
-              <div class="flex-grow"></div>
               <div
-                class="mt-1"
+                class="flex"
               >
-                {{ day.day }}
+                <div>
+                  <v-btn
+                    color="green"
+                    variant="text"
+                    @click="openPlusDialog(day.day)"
+                  ><svg-icon type="mdi" :path="path"></svg-icon>
+                  </v-btn>
+                </div>
+                <div class="flex-grow"></div>
+                <div
+                  class="mt-1"
+                >
+                  {{ day.day }}
+                </div>
               </div>
-            </div>
-          </template>
-            <div
+            </template>
+            <template
               v-if="query[day.day]"
             >
-              <template
+              <div
                 v-for="event in query[day.day]"
                 :key="event.event_id"
+                v-show="!event.hidden"
               >
                 <button
+                  :id="event.tag_id"
                   class="bg-indigo-600 font-semibold text-white py-1 px-2 my-1 rounded"
                   :style="{backgroundColor: event.tag_color}"
                   @click="openEventDialog(event)"
                 >
                   {{ event.title }}
-                </button><br>
-              </template>
-            </div>
+                </button>
+              </div>
+            </template>
           </td>
         </tr>
       </tbody>
