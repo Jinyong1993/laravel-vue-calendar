@@ -7,14 +7,19 @@ import { VDataTable } from 'vuetify/labs/VDataTable'
         searchDialog: false,
         search_title: null,
         searchData: [],
-        itemsPerPage: 0,
+        itemsPerPage: 10,
         headers: [
           {title: 'イベントID', value: 'event_id', sortable: true},
           {title: 'タイトル', value: 'title', sortable: true},
           {title: '期間 (from)', value: 'date_from', sortable: true},
           {title: '期間 (to)', value: 'date_to', sortable: true},
+          { text: '', value: 'actions', sortable: false },
         ],
       }
+    },
+
+    props: {
+
     },
 
     components: {
@@ -24,7 +29,9 @@ import { VDataTable } from 'vuetify/labs/VDataTable'
     methods: {
       search(){
         axios.get(route('calendar.searchEvent'), {
-          search_title: this.search_title,
+          params: {
+            search_title: this.search_title,
+          }
         },
         {
         headers: {
@@ -66,7 +73,6 @@ import { VDataTable } from 'vuetify/labs/VDataTable'
             v-model="search_title"
             label="イベント名"
             hide-details="auto"
-            required
           ></v-text-field>
         </div>
         <div
@@ -87,9 +93,7 @@ import { VDataTable } from 'vuetify/labs/VDataTable'
           :items="searchData"
           item-value="event_id"
           class="elevation-1"
-          no-data-text="検索したいキーワードを入力してください。"
         ></v-data-table>
-        {{ search_title }}
         <div
           class="mt-2"
         >

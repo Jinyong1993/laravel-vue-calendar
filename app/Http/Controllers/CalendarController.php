@@ -156,7 +156,7 @@ class CalendarController extends Controller
     {
         $q = Event::select('event.*')
         ->where('event.user_id', auth()->user()->id)
-        // ->where('event.title', 'LIKE', '%'.$request->search_title.'%')
+        ->where('event.title', 'LIKE', '%'.$request->search_title.'%')
         ->get()->all();
 
         return $q;

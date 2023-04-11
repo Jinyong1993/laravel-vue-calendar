@@ -277,6 +277,7 @@ export default {
     // },
 
     openSearchDialog(){
+      this.$refs.dialogSearch.search_title = null
       this.$refs.dialogSearch.searchDialog = true
     },
   },
@@ -303,8 +304,17 @@ export default {
     ref="dialogSearch"
   ></SearchDialog>
 
+  <div class="mt-10">
+    <v-select
+      v-model="eventDialogData.tag_id"
+      :items="myColorQuery"
+      label="マイカラー設定"
+      item-title="tag_name"
+      item-value="tag_id"
+    ></v-select>
+  </div>
   <div
-    class="flex text-center my-10"
+    class="flex text-center mb-7"
   >
     <div class="flex-grow"></div>
     <button
