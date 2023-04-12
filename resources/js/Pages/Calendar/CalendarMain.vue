@@ -2,6 +2,7 @@
 import CalendarHeader from '@/Layouts/CalendarHeader.vue'
 import SearchDialog from './CalendarSearchDialog.vue'
 import MyColorSettingDialog from './MyColorSettingDialog.vue'
+import PlusButton from './EventPlusDialog.vue'
 import axios from 'axios'
 import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
@@ -22,6 +23,7 @@ export default {
     VueDatePicker,
     SvgIcon,
     MyColorSettingDialog,
+    PlusButton,
   },
 
   data() {
@@ -38,7 +40,6 @@ export default {
 
       active: {
           eventDialog: false,
-          plusDialog: false,
           progressDialog: false,
       },
 
@@ -161,7 +162,7 @@ export default {
         }
       }).then((response) => {
         this.active.eventDialog = false
-        this.active.plusDialog = false
+        this.$refs.plusButtonDialog.plusDialog = false
 
         this.getDateBoard(0, true)
 
@@ -184,7 +185,7 @@ export default {
         }
       }).then((response) => {
         this.active.eventDialog = false
-        this.active.plusDialog = false
+        this.$refs.plusButtonDialog.plusDialog = false
 
         this.getDateBoard(0, true)
 
@@ -203,7 +204,7 @@ export default {
         tag_id:null,
       }
 
-      this.active.plusDialog = true
+      this.$refs.plusButtonDialog.plusDialog = true
     },
 
     getMyColor(){
@@ -578,108 +579,6 @@ export default {
     </v-dialog>
   </v-row>
 
-  <!-- プラス、イベント追加ダイアログ -->
-  <v-row justify="center">
-    <v-dialog
-      v-model="active.plusDialog"
-      persistent
-      width="500px"
-    >
-      <v-card
-       class="px-5"
-      >
-        <div
-          class="flex justify-between"
-        >
-          <div
-            class="text-h5 my-2"
-          >
-            <v-card-title>
-              イベント追加
-            </v-card-title>
-          </div>
-        </div>
-        <v-text-field
-          v-model="eventDialogData.title"
-          label="タイトル"
-          hide-details="auto"
-          required
-        ></v-text-field>
-        <hr>
-        <v-textarea
-          v-model="eventDialogData.text"
-          label="内容"
-          required
-        ></v-textarea>
-        <div>
-          <v-select
-            v-model="eventDialogData.tag_id"
-            :items="this.myColorQuery"
-            label="マイカラー設定"
-            item-title="tag_name"
-            item-value="tag_id"
-          >
-          </v-select>
-        </div>
-        <div
-          class="flex justify-between"
-        >
-          <VueDatePicker
-            v-model="eventDialogData.date_from"
-            :month-change-on-scroll="false"
-            model-type="yyyy-MM-dd"
-            :format="eventDialogData.date_from"
-            auto-apply
-            placeholder="日付を選択する"
-            show-now-button
-            required
-            :enable-time-picker="false"
-            now-button-label="本日"
-            :esc-close="true"
-            teleport-center
-          ></VueDatePicker>
-          <span>&nbsp;~&nbsp;</span>
-          <VueDatePicker
-            v-model="eventDialogData.date_to"
-            :month-change-on-scroll="false"
-            model-type="yyyy-MM-dd"
-            :format="eventDialogData.date_to"
-            auto-apply
-            placeholder="日付を選択する"
-            required
-            :enable-time-picker="false"
-            :esc-close="true"
-            teleport-center
-          ></VueDatePicker>
-        </div>
-        <div
-          class="mt-5"
-        >
-          <hr>
-        </div>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="grey-darken-5"
-            variant="text"
-            @click="active.plusDialog = false"
-          >
-            閉じる
-          </v-btn>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="green-darken-1"
-            variant="text"
-            @click="eventConfirm"
-          >
-            確定
-          </v-btn>
-          <v-spacer></v-spacer>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </v-row>
-
   <!-- プログレスダイアログ -->
   <v-row justify="center">
     <v-dialog
@@ -694,6 +593,12 @@ export default {
     </v-dialog>
   </v-row>
 
+  <!-- プラスボタンダイアログ -->
+  <PlusButton
+    ref="plusButtonDialog"
+  ></PlusButton>
+
+  <!-- マイカラー設定ダイアログ -->
   <MyColorSettingDialog
     ref="colorSettingDialog"
   ></MyColorSettingDialog>
