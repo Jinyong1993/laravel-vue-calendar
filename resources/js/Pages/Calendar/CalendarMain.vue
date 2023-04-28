@@ -2,8 +2,8 @@
 import CalendarHeader from '@/Layouts/CalendarHeader.vue'
 import SearchDialog from './CalendarSearchDialog.vue'
 import MyColorSettingDialog from './MyColorSettingDialog.vue'
-import PlusButton from './EventPlusDialog.vue'
-import EventSetting from './EventSettingDialog.vue'
+import EventPlusDialog from './EventPlusDialog.vue'
+import EventSettingDialog from './EventSettingDialog.vue'
 import axios from 'axios'
 import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
@@ -24,8 +24,8 @@ export default {
     VueDatePicker,
     SvgIcon,
     MyColorSettingDialog,
-    PlusButton,
-    EventSetting,
+    EventPlusDialog,
+    EventSettingDialog,
   },
 
   data() {
@@ -42,6 +42,8 @@ export default {
 
       active: {
           progressDialog: false,
+          plusDialog: false,
+          eventDialog: false,
       },
 
       eventDialogData: {
@@ -145,7 +147,7 @@ export default {
       this.eventDialogData.tag_color = event.tag_color
       */
 
-      this.$refs.eventSettingDialog.eventDialog = true
+      this.active.eventDialog = true
     },
 
     eventConfirm(){
@@ -162,8 +164,8 @@ export default {
           'Content-Type': 'application/json'
         }
       }).then((response) => {
-        this.$refs.eventSettingDialog.eventDialog = false
-        this.$refs.plusButtonDialog.plusDialog = false
+        this.active.plusDialog = false
+        this.active.eventDialog = false
 
         this.getDateBoard(0, true)
 
@@ -185,9 +187,7 @@ export default {
           'Content-Type': 'application/json'
         }
       }).then((response) => {
-        this.$refs.eventSettingDialog.eventDialog = false
-        this.$refs.plusButtonDialog.plusDialog = false
-
+        this.active.eventDialog = false
         this.getDateBoard(0, true)
 
       }).catch(function (error) {
@@ -204,8 +204,7 @@ export default {
         date_to:null,
         tag_id:null,
       }
-
-      this.$refs.plusButtonDialog.plusDialog = true
+      this.active.plusDialog = true
     },
 
     getMyColor(){
@@ -458,9 +457,13 @@ export default {
   </div>
 
   <!-- イベント設定ダイアログ -->
-  <EventSetting
-    ref="eventSettingDialog"
-  ></EventSetting>
+  <EventSettingDialog
+    v-model:show="active.eventDialog"
+    v-model:data="eventDialogData"
+    :colors="myColorQuery"
+    @confirm="eventConfirm"
+    @delete="eventDelete"
+  ></EventSettingDialog>
 
   <!-- プログレスダイアログ -->
   <v-row justify="center">
@@ -477,9 +480,12 @@ export default {
   </v-row>
 
   <!-- プラスボタンダイアログ -->
-  <PlusButton
-    ref="plusButtonDialog"
-  ></PlusButton>
+  <EventPlusDialog
+    v-model:show="active.plusDialog"
+    v-model:data="eventDialogData"
+    :colors="myColorQuery"
+    @confirm="eventConfirm"
+  ></EventPlusDialog>
 
   <!-- マイカラー設定ダイアログ -->
   <MyColorSettingDialog

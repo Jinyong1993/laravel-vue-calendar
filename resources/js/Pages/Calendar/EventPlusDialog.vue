@@ -5,13 +5,20 @@ import '@vuepic/vue-datepicker/dist/main.css'
   export default {
     data () {
       return {
-        plusDialog: false,
+
       }
     },
 
-    props: {
-
-    },
+    props: [
+      'show',
+      'data',
+      'colors',
+    ],
+    emits: [
+      'update:show',
+      'update:data',
+      "confirm",
+    ],
 
     components: {
       VueDatePicker,
@@ -20,109 +27,126 @@ import '@vuepic/vue-datepicker/dist/main.css'
     methods: {
 
     },
+
+    computed: {
+      dialogShow: {
+        get() {
+          return this.show
+        },
+        set(value) {
+          this.$emit('update:show', value)
+        }
+      },
+      dialogData: {
+        get() {
+          return this.data
+        },
+        set(value) {
+          this.$emit('update:data', value)
+        }
+      },
+    },
   }
 </script>
 
 <template>
-  <v-row justify="center">
-    <v-dialog
-      v-model="plusDialog"
-      persistent
-      width="500px"
+  <v-dialog
+    v-model="dialogShow"
+    persistent
+    width="500px"
+  >
+    <v-card
+      class="px-5"
     >
-      <v-card
-       class="px-5"
+      <div
+        class="flex justify-between"
       >
         <div
-          class="flex justify-between"
+          class="text-h5 my-2"
         >
-          <div
-            class="text-h5 my-2"
-          >
-            <v-card-title>
-              イベント追加
-            </v-card-title>
-          </div>
+          <v-card-title>
+            イベント追加
+          </v-card-title>
         </div>
-        <v-text-field
-          v-model="this.$parent.eventDialogData.title"
-          label="タイトル"
-          hide-details="auto"
+      </div>
+      <v-text-field
+        v-model="dialogData.title"
+        label="タイトル"
+        hide-details="auto"
+        required
+      ></v-text-field>
+      <hr>
+      <v-textarea
+        v-model="dialogData.text"
+        label="内容"
+        required
+      ></v-textarea>
+      <div>
+        <v-select
+          v-model="dialogData.tag_id"
+          :items="colors"
+          label="マイカラー設定"
+          item-title="tag_name"
+          item-value="tag_id"
+        >
+        </v-select>
+      </div>
+      <div
+        class="flex justify-between"
+      >
+        <VueDatePicker
+          v-model="dialogData.date_from"
+          :month-change-on-scroll="false"
+          model-type="yyyy-MM-dd"
+          :format="dialogData.date_from"
+          auto-apply
+          placeholder="日付を選択する"
+          show-now-button
           required
-        ></v-text-field>
+          :enable-time-picker="false"
+          now-button-label="本日"
+          :esc-close="true"
+          teleport-center
+        ></VueDatePicker>
+        <span>&nbsp;~&nbsp;</span>
+        <VueDatePicker
+          v-model="dialogData.date_to"
+          :month-change-on-scroll="false"
+          model-type="yyyy-MM-dd"
+          :format="dialogData.date_to"
+          auto-apply
+          placeholder="日付を選択する"
+          required
+          :enable-time-picker="false"
+          :esc-close="true"
+          teleport-center
+        ></VueDatePicker>
+      </div>
+      <div
+        class="mt-5"
+      >
         <hr>
-        <v-textarea
-          v-model="this.$parent.eventDialogData.text"
-          label="内容"
-          required
-        ></v-textarea>
-        <div>
-          <v-select
-            v-model="this.$parent.eventDialogData.tag_id"
-            :items="this.$parent.myColorQuery"
-            label="マイカラー設定"
-            item-title="tag_name"
-            item-value="tag_id"
-          >
-          </v-select>
-        </div>
-        <div
-          class="flex justify-between"
+      </div>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn
+          color="grey-darken-5"
+          variant="text"
+          @click="dialogShow = false"
         >
-          <VueDatePicker
-            v-model="this.$parent.eventDialogData.date_from"
-            :month-change-on-scroll="false"
-            model-type="yyyy-MM-dd"
-            :format="this.$parent.eventDialogData.date_from"
-            auto-apply
-            placeholder="日付を選択する"
-            show-now-button
-            required
-            :enable-time-picker="false"
-            now-button-label="本日"
-            :esc-close="true"
-            teleport-center
-          ></VueDatePicker>
-          <span>&nbsp;~&nbsp;</span>
-          <VueDatePicker
-            v-model="this.$parent.eventDialogData.date_to"
-            :month-change-on-scroll="false"
-            model-type="yyyy-MM-dd"
-            :format="this.$parent.eventDialogData.date_to"
-            auto-apply
-            placeholder="日付を選択する"
-            required
-            :enable-time-picker="false"
-            :esc-close="true"
-            teleport-center
-          ></VueDatePicker>
-        </div>
-        <div
-          class="mt-5"
+          閉じる
+        </v-btn>
+        <v-spacer></v-spacer>
+        <v-btn
+          color="green-darken-1"
+          variant="text"
+          @click="$emit('confirm', true)"
         >
-          <hr>
-        </div>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="grey-darken-5"
-            variant="text"
-            @click="plusDialog = false"
-          >
-            閉じる
-          </v-btn>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="green-darken-1"
-            variant="text"
-            @click="this.$parent.eventConfirm"
-          >
-            確定
-          </v-btn>
-          <v-spacer></v-spacer>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </v-row>
+          確定
+        </v-btn>
+        <v-spacer></v-spacer>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
