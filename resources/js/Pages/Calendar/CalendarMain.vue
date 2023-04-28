@@ -237,13 +237,6 @@ export default {
       this.active.colorSettingDialog = true
     },
 
-    // myColorChange(event){
-    //   this.myColorDialogData.tag_id = event.tag_id
-    //   this.myColorDialogData.tag_name = event.tag_name
-    //   this.myColorDialogData.tag_note = event.tag_note
-    //   this.myColorDialogData.tag_color = event.tag_color
-    // },
-
     openSearchDialog(){
       this.$refs.dialogSearch.search_title = null
       this.$refs.dialogSearch.searchDialog = true
@@ -320,11 +313,13 @@ export default {
 </script>
 
 <template>
+  <!-- ヘッダー -->
   <CalendarHeader
     :cur_date="cur_date"
     :year="year"
   ></CalendarHeader>
 
+  <!-- 検索ダイアログ -->
   <SearchDialog
     ref="dialogSearch"
   ></SearchDialog>
@@ -341,6 +336,8 @@ export default {
     >
     </v-select>
   </div>
+
+  <!-- 日付テーブル -->
   <DateTable
     :dates="dates"
     :year="year"
@@ -353,6 +350,8 @@ export default {
     @plus="plus"
     @event="event"
   ></DateTable>
+
+  <!-- ボタンたち -->
   <div
     class="flex my-3 py-5 px-5"
   >
