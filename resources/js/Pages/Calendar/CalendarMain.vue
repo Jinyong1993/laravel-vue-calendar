@@ -3,10 +3,10 @@ import CalendarHeader from '@/Layouts/CalendarHeader.vue'
 import SearchDialog from './CalendarSearchDialog.vue'
 import MyColorSettingDialog from './MyColorSettingDialog.vue'
 import EventSettingDialog from './EventSettingDialog.vue'
+import DateTable from './DateTable.vue'
 import axios from 'axios'
 import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
-import SvgIcon from '@jamescoyle/vue-icon'
 import { mdiPlusCircle } from '@mdi/js'
 import {circliful} from 'js-plugin-circliful'
 import 'js-plugin-circliful/dist/main.css'
@@ -21,9 +21,9 @@ export default {
     CalendarHeader,
     SearchDialog,
     VueDatePicker,
-    SvgIcon,
     MyColorSettingDialog,
     EventSettingDialog,
+    DateTable,
   },
 
   data() {
@@ -70,7 +70,6 @@ export default {
         tag_color: null,
       },
 
-      path: mdiPlusCircle,
       //key: 0,
     }
   },
@@ -143,7 +142,7 @@ export default {
     },
 
     openEventDialog(event){
-      //   this.eventDialogData = event
+      //this.eventDialogData = event
 
       this.eventDialogData.event_id = event.event_id
       this.eventDialogData.title = event.title
@@ -307,6 +306,7 @@ export default {
       })
     },
   },
+
   created() {
     let date = new Date()
     this.year = date.getFullYear()
@@ -342,166 +342,66 @@ export default {
     >
     </v-select>
   </div>
+  <DateTable
+    :dates="dates"
+    :year="year"
+    :month="month"
+    :query="query"
+    :is_list="is_list"
+    v-model:date_board="date_board"
+    @previous="getDateBoard(-1)"
+    @next="getDateBoard(1)"
+  ></DateTable>
   <div
-    class="flex text-center mb-7"
+    class="flex my-3 py-5 px-5"
   >
-    <div class="flex-grow"></div>
-    <button
-      class="bg-indigo-600 font-semibold text-white py-2 px-10 rounded shadow-lg shadow-indigo-500/50"
-      @click="getDateBoard(-1)"
-    >
-      先月
-    </button>
-    <div class="flex-grow"></div>
     <div
-      class="flex-grow text-5xl font-extrabold text-sky-500"
+      v-if="!is_list"
     >
-      {{ month+1 }} 月
+      <button
+        class="bg-emerald-500 font-semibold text-white py-4 px-4 mx-5 rounded"
+        @click="openMyColorSettingDialog"
+      >
+        マイカラー設定
+      </button>
     </div>
-    <div class="flex-grow"></div>
-    <button
-      class="bg-indigo-600 font-semibold text-white py-2 px-10 rounded shadow-lg shadow-indigo-500/50"
-      @click="getDateBoard(1)"
-    >
-      来月
-    </button>
-    <div class="flex-grow"></div>
-  </div>
-  <div class="my-3">
-    <table
-      class="border-collapse border border-slate-500 w-full"
-    >
-      <thead>
-        <tr>
-          <template v-for="date in dates">
-            <th
-              class="border border-slate-600 h-8"
-            >{{ date }}</th>
-          </template>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="(week, w_idx) in date_board"
-          :key="w_idx"
-        >
-          <td
-            class="border border-slate-700 h-15 text-right pr-4 pb-10"
-            style="vertical-align: top;"
-            v-for="(day, d_idx) in week"
-            :key="d_idx"
-          >
-            <template
-              v-if="day.day"
-            >
-              <div
-                class="flex"
-              >
-                <div
-                  v-if="!is_list"
-                >
-                  <v-btn
-                    color="green"
-                    variant="text"
-                    @click="openPlusDialog(day.day)"
-                  ><svg-icon type="mdi" :path="path"></svg-icon>
-                  </v-btn>
-                </div>
-                <div class="flex-grow"></div>
-                <div
-                  class="mt-1"
-                >
-                  {{ day.day }}
-                </div>
-              </div>
-            </template>
-            <template
-              v-if="query[day.day]"
-            >
-              <div
-                v-for="event in query[day.day]"
-                :key="event.event_id"
-                v-show="!event.hidden"
-              >
-                <template
-                  v-if="is_list"
-                >
-                  <button
-                    class="bg-indigo-600 font-semibold text-white py-1 px-2 my-1 rounded"
-                    :style="{backgroundColor: event.tag_color}"
-                  >
-                    {{ event.title }}
-                  </button>
-                </template>
-                <template
-                 v-else
-                >
-                  <button
-                    :id="event.tag_id"
-                    class="bg-indigo-600 font-semibold text-white py-1 px-2 my-1 rounded"
-                    :style="{backgroundColor: event.tag_color}"
-                    @click="openEventDialog(event)"
-                  >
-                    {{ event.title }}
-                  </button>
-                </template>
-              </div>
-            </template>
-          </td>
-        </tr>
-      </tbody>
-    </table>
     <div
-     class="flex my-3 py-5 px-5"
+      v-if="!is_list"
     >
-      <div
+      <button
+        class="bg-emerald-500 font-semibold text-white py-4 px-4 mx-5 rounded"
+        @click="openSearchDialog"
+      >
+        イベント検索
+      </button>
+    </div>
+    <div>
+      <template
         v-if="!is_list"
       >
-        <button
-          class="bg-emerald-500 font-semibold text-white py-4 px-4 mx-5 rounded"
-          @click="openMyColorSettingDialog"
+        <inertia-link
+          :href="route('calendar.calendarList')"
         >
-          マイカラー設定
-        </button>
-      </div>
-      <div
-        v-if="!is_list"
+          <button
+            class="bg-emerald-500 font-semibold text-white py-4 px-4 mx-5 rounded"
+          >
+            カレンダー閲覧
+          </button>
+        </inertia-link>
+      </template>
+      <template
+        v-else
       >
-        <button
-          class="bg-emerald-500 font-semibold text-white py-4 px-4 mx-5 rounded"
-          @click="openSearchDialog"
+        <inertia-link
+          :href="route('calendar.main')"
         >
-          イベント検索
-        </button>
-      </div>
-      <div>
-        <template
-          v-if="!is_list"
-        >
-          <inertia-link
-            :href="route('calendar.calendarList')"
+          <button
+            class="bg-emerald-500 font-semibold text-white py-4 px-4 mx-5 rounded"
           >
-            <button
-              class="bg-emerald-500 font-semibold text-white py-4 px-4 mx-5 rounded"
-            >
-              カレンダー閲覧
-            </button>
-          </inertia-link>
-        </template>
-        <template
-          v-else
-        >
-          <inertia-link
-            :href="route('calendar.main')"
-          >
-            <button
-              class="bg-emerald-500 font-semibold text-white py-4 px-4 mx-5 rounded"
-            >
-              カレンダー編集
-            </button>
-          </inertia-link>
-        </template>
-      </div>
+            カレンダー編集
+          </button>
+        </inertia-link>
+      </template>
     </div>
   </div>
 
@@ -536,5 +436,4 @@ export default {
     @colorDelete="myColorDelete"
     @colorConfirm="myColorConfirm"
   ></MyColorSettingDialog>
-
 </template>
