@@ -2,7 +2,6 @@
 import CalendarHeader from '@/Layouts/CalendarHeader.vue'
 import SearchDialog from './CalendarSearchDialog.vue'
 import MyColorSettingDialog from './MyColorSettingDialog.vue'
-import EventPlusDialog from './EventPlusDialog.vue'
 import EventSettingDialog from './EventSettingDialog.vue'
 import axios from 'axios'
 import VueDatePicker from '@vuepic/vue-datepicker'
@@ -24,7 +23,6 @@ export default {
     VueDatePicker,
     SvgIcon,
     MyColorSettingDialog,
-    EventPlusDialog,
     EventSettingDialog,
   },
 
@@ -145,15 +143,15 @@ export default {
     },
 
     openEventDialog(event){
-      this.eventDialogData = event
+      //   this.eventDialogData = event
 
-      /* >> this.eventDialogData = event <<
+      this.eventDialogData.event_id = event.event_id
       this.eventDialogData.title = event.title
       this.eventDialogData.text = event.text
       this.eventDialogData.date_from = event.date_from
       this.eventDialogData.date_to = event.date_to
       this.eventDialogData.tag_color = event.tag_color
-      */
+      this.eventDialogData.tag_id = event.tag_id
 
       this.active.eventDialog = true
     },
@@ -211,8 +209,9 @@ export default {
         date_from:this.year + '-' + (this.month+1) + '-' + day,
         date_to:null,
         tag_id:null,
+        is_new:true,
       }
-      this.active.plusDialog = true
+      this.active.eventDialog = true
     },
 
     getMyColor(){
@@ -528,14 +527,6 @@ export default {
       </div>
     </v-dialog>
   </v-row>
-
-  <!-- プラスボタンダイアログ -->
-  <EventPlusDialog
-    v-model:show="active.plusDialog"
-    v-model:data="eventDialogData"
-    :colors="myColorQuery"
-    @confirm="eventConfirm"
-  ></EventPlusDialog>
 
   <!-- マイカラー設定ダイアログ -->
   <MyColorSettingDialog

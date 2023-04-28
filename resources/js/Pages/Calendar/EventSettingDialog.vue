@@ -32,10 +32,10 @@ import '@vuepic/vue-datepicker/dist/main.css'
     computed: {
       dialogShow: {
           get() {
-              return this.show
+            return this.show
           },
           set(value) {
-              this.$emit('update:show', value)
+            this.$emit('update:show', value)
           }
       },
       dialogData: {
@@ -65,12 +65,20 @@ import '@vuepic/vue-datepicker/dist/main.css'
         <div
           class="text-h5 my-2"
         >
-          <v-card-title>
-            イベント設定
+          <v-card-title
+            v-if="!data.is_new"
+          >
+            イベント編集
+          </v-card-title>
+          <v-card-title
+            v-else
+          >
+            新規イベント追加
           </v-card-title>
         </div>
         <div
           class="text-h5 my-2"
+          v-if="!data.is_new"
         >
           <v-card-title
             v-if="dialogData.tag_name"
@@ -152,6 +160,7 @@ import '@vuepic/vue-datepicker/dist/main.css'
         </v-btn>
         <v-spacer></v-spacer>
         <v-btn
+          v-if="!data.is_new"
           color="red-darken-1"
           variant="text"
           @click="$emit('delete', true)"
