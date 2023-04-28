@@ -39,10 +39,10 @@ export default {
       myColorQuery: [],
 
       active: {
-          progressDialog: false,
-          plusDialog: false,
-          eventDialog: false,
-          colorSettingDialog: false,
+        progressDialog: false,
+        plusDialog: false,
+        eventDialog: false,
+        colorSettingDialog: false,
       },
 
       eventDialogData: {
@@ -141,6 +141,16 @@ export default {
       }
     },
 
+    event(event) {
+      this.eventDialogData.event_id = event.event_id
+      this.eventDialogData.title = event.title
+      this.eventDialogData.text = event.text
+      this.eventDialogData.date_from = event.date_from
+      this.eventDialogData.date_to = event.date_to
+      this.eventDialogData.tag_color = event.tag_color
+      this.eventDialogData.tag_id = event.tag_id
+    },
+
     openEventDialog(event){
       //this.eventDialogData = event
 
@@ -198,6 +208,18 @@ export default {
       }).catch(function (error) {
 
       });
+    },
+
+    plus(day) {
+      this.eventDialogData = {
+        event_id:null,
+        title:null,
+        text:null,
+        date_from:this.year + '-' + (this.month+1) + '-' + day,
+        date_to:null,
+        tag_id:null,
+        is_new:true,
+      }
     },
 
     openPlusDialog(day){
@@ -351,6 +373,8 @@ export default {
     v-model:date_board="date_board"
     @previous="getDateBoard(-1)"
     @next="getDateBoard(1)"
+    @plus="openPlusDialog"
+    @event="openEventDialog"
   ></DateTable>
   <div
     class="flex my-3 py-5 px-5"

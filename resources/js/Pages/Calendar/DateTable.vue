@@ -108,7 +108,7 @@ import { mdiPlusCircle } from '@mdi/js'
                   <v-btn
                     color="green"
                     variant="text"
-                    @click=""
+                    @click="$emit('plus', day.day)"
                   ><svg-icon type="mdi" :path="path"></svg-icon>
                   </v-btn>
                 </div>
@@ -145,7 +145,7 @@ import { mdiPlusCircle } from '@mdi/js'
                     :id="event.tag_id"
                     class="bg-indigo-600 font-semibold text-white py-1 px-2 my-1 rounded"
                     :style="{backgroundColor: event.tag_color}"
-                    @click=""
+                    @click="$emit('event', event)"
                   >
                     {{ event.title }}
                   </button>
