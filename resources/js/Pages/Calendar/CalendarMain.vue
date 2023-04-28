@@ -44,6 +44,7 @@ export default {
           progressDialog: false,
           plusDialog: false,
           eventDialog: false,
+          colorSettingDialog: false,
       },
 
       eventDialogData: {
@@ -62,6 +63,13 @@ export default {
         date_from: null,
         date_to: null,
         tag_id: null,
+      },
+
+      myColorDialogData: {
+        tag_id: null,
+        tag_name: null,
+        tag_note: null,
+        tag_color: null,
       },
 
       path: mdiPlusCircle,
@@ -222,14 +230,14 @@ export default {
     },
 
     openMyColorSettingDialog(){
-      this.$refs.colorSettingDialog.myColorDialogData = {
+      this.myColorDialogData = {
         tag_id: null,
         tag_name: null,
         tag_note: null,
         tag_color: null,
       }
 
-      this.$refs.colorSettingDialog.colorSettingDialog = true
+      this.active.colorSettingDialog = true
     },
 
     // myColorChange(event){
@@ -255,6 +263,48 @@ export default {
             element.hidden = 1
           }
         })
+      })
+    },
+
+    myColorDelete(){
+      axios.post(route('calendar.colorDelete'), {
+        tag_id: this.myColorDialogData.tag_id,
+        tag_name: this.myColorDialogData.tag_name,
+        tag_note: this.myColorDialogData.tag_note,
+        tag_color: this.myColorDialogData.tag_color,
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then((response) => {
+        this.active.colorSettingDialog = false
+
+        this.getDateBoard(0, true)
+        this.getMyColor()
+      }).catch(function (error) {
+
+      })
+    },
+
+    myColorConfirm(){
+      axios.post(route('calendar.colorUpdate'), {
+        tag_id: this.myColorDialogData.tag_id,
+        tag_name: this.myColorDialogData.tag_name,
+        tag_note: this.myColorDialogData.tag_note,
+        tag_color: this.myColorDialogData.tag_color,
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then((response) => {
+        this.active.colorSettingDialog = false
+
+        this.getDateBoard(0, true)
+        this.getMyColor()
+      }).catch(function (error) {
+        console.log(error)
       })
     },
   },
@@ -489,7 +539,11 @@ export default {
 
   <!-- マイカラー設定ダイアログ -->
   <MyColorSettingDialog
-    ref="colorSettingDialog"
+    v-model:show="active.colorSettingDialog"
+    v-model:data="myColorDialogData"
+    :colors="myColorQuery"
+    @colorDelete="myColorDelete"
+    @colorConfirm="myColorConfirm"
   ></MyColorSettingDialog>
 
 </template>

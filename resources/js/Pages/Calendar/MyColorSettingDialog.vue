@@ -2,19 +2,39 @@
   export default {
     data () {
       return {
-        colorSettingDialog: false,
 
-        myColorDialogData: {
-          tag_id: null,
-          tag_name: null,
-          tag_note: null,
-          tag_color: null,
-        },
       }
     },
 
-    props: {
+    props: [
+      'show',
+      'data',
+      'colors',
+    ],
+    emits: [
+      'update:show',
+      'update:data',
+      'colorDelete',
+      'colorConfirm',
+    ],
 
+    computed: {
+      dialogShow: {
+        get() {
+          return this.show
+        },
+        set(value) {
+          this.$emit('update:show', value)
+        },
+      },
+      dialogData: {
+        get() {
+          return this.data
+        },
+        set(value) {
+          this.$emit('update:data', value);
+        }
+      }
     },
 
     components: {
@@ -22,48 +42,6 @@
     },
 
     methods: {
-      myColorDelete(){
-        axios.post(route('calendar.colorDelete'), {
-          tag_id: this.myColorDialogData.tag_id,
-          tag_name: this.myColorDialogData.tag_name,
-          tag_note: this.myColorDialogData.tag_note,
-          tag_color: this.myColorDialogData.tag_color,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }).then((response) => {
-          this.colorSettingDialog = false
-
-          this.$parent.getDateBoard(0, true)
-          this.$parent.getMyColor()
-        }).catch(function (error) {
-
-        })
-      },
-
-      myColorConfirm(){
-        axios.post(route('calendar.colorUpdate'), {
-          tag_id: this.myColorDialogData.tag_id,
-          tag_name: this.myColorDialogData.tag_name,
-          tag_note: this.myColorDialogData.tag_note,
-          tag_color: this.myColorDialogData.tag_color,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }).then((response) => {
-          this.colorSettingDialog = false
-
-          this.$parent.getDateBoard(0, true)
-          this.$parent.getMyColor()
-        }).catch(function (error) {
-          console.log(error)
-        })
-      },
-
 
     },
   }
@@ -72,7 +50,7 @@
 <template>
   <v-row justify="center">
     <v-dialog
-      v-model="colorSettingDialog"
+      v-model="dialogShow"
       persistent
       width="500px"
     >
@@ -91,21 +69,21 @@
           </div>
         </div>
         <v-text-field
-          v-model="myColorDialogData.tag_name"
+          v-model="dialogData.tag_name"
           label="カラー名"
           hide-details="auto"
           required
         ></v-text-field>
         <hr>
         <v-textarea
-          v-model="myColorDialogData.tag_note"
+          v-model="dialogData.tag_note"
           label="カラー説明"
           required
         ></v-textarea>
         <div>
           <v-select
-            v-model="myColorDialogData"
-            :items="this.$parent.myColorQuery"
+            v-model="dialogData"
+            :items="colors"
             label="マイカラー設定"
             item-title="tag_name"
             item-value="tag_id"
@@ -117,12 +95,12 @@
           class="px-20 py-5"
         >
           <v-color-picker
-            v-model="myColorDialogData.tag_color"
+            v-model="dialogData.tag_color"
             elevation="5"
           ></v-color-picker>
         </div>
         <div>
-          {{ myColorDialogData.tag_color }}
+          {{ dialogData.tag_color }}
         </div>
         <div
           class="mt-5"
@@ -134,7 +112,7 @@
           <v-btn
             color="grey-darken-5"
             variant="text"
-            @click="colorSettingDialog = false"
+            @click="dialogShow = false"
           >
             閉じる
           </v-btn>
@@ -142,7 +120,7 @@
           <v-btn
             color="red-darken-1"
             variant="text"
-            @click="myColorDelete"
+            @click="$emit('colorDelete', true)"
           >
             削除
           </v-btn>
@@ -150,7 +128,7 @@
           <v-btn
             color="green-darken-1"
             variant="text"
-            @click="myColorConfirm"
+            @click="$emit('colorConfirm', true)"
           >
             確定
           </v-btn>

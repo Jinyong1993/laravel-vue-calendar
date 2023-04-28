@@ -35,7 +35,7 @@ import '@vuepic/vue-datepicker/dist/main.css'
               return this.show
           },
           set(value) {
-              this.$emit('update:show', value);
+              this.$emit('update:show', value)
           }
       },
       dialogData: {
