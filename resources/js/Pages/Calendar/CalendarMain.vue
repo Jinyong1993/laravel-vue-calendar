@@ -69,8 +69,6 @@ export default {
         tag_note: null,
         tag_color: null,
       },
-
-      //key: 0,
     }
   },
 
@@ -99,26 +97,29 @@ export default {
     },
 
     dateBoard(delta){
+      // 先月
       if(delta == -1){
         this.month -= 1
         if(this.month == -1){
           this.year -= 1
           this.month = 11
         }
-      } else if(delta == 1){
+      } else if(delta == 1){ // 来月
         this.month += 1
         if(this.month == 12){
           this.year += 1
           this.month = 0
         }
       }
+
+      // 日付テーブル生成
       let date_board = []
       let firstDay = new Date(this.year, this.month, 1).getDay()
       let lastDate = new Date(this.year, this.month + 1, 0).getDate()
       let day = 1
       for(let i=0; ; i++){
         date_board[i] = []
-        if(i == 0){
+        if(i == 0){ // 一週目
           let h=0
           for(; h<firstDay; h++){
             date_board[i][h] = ''
