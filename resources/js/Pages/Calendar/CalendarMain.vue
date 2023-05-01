@@ -62,11 +62,14 @@ export default {
         tag_note: null,
         tag_color: null,
       },
+
+      success: false,
     }
   },
 
   methods: {
     eventConfirm(){
+      this.success = false
       axios.post(route('calendar.eventUpdate'), {
         event_id: this.eventDialogData.event_id,
         title: this.eventDialogData.title,
@@ -82,15 +85,15 @@ export default {
       }).then((response) => {
         this.active.addDialog = false
         this.active.editDialog = false
-
         this.$refs.date_table.getDateBoard(0)
-
+        this.success = true
       }).catch(function (error) {
 
       });
     },
 
     eventDelete(){
+      this.success = false
       axios.post(route('calendar.eventDelete'), {
         event_id: this.eventDialogData.event_id,
         title: this.eventDialogData.title,
@@ -105,6 +108,7 @@ export default {
       }).then((response) => {
         this.active.editDialog = false
         this.$refs.date_table.getDateBoard(0)
+        this.success = true
       }).catch(function (error) {
 
       });
@@ -133,6 +137,7 @@ export default {
         date_to: event.date_to,
         tag_color: event.tag_color,
         tag_id: event.tag_id,
+        tag_name: event.tag_name,
         is_new: false,
       }
 
@@ -184,6 +189,7 @@ export default {
     },
 
     myColorDelete(){
+      this.success = false
       axios.post(route('calendar.colorDelete'), {
         tag_id: this.myColorDialogData.tag_id,
         tag_name: this.myColorDialogData.tag_name,
@@ -198,12 +204,14 @@ export default {
         this.active.colorSettingDialog = false
         this.$refs.date_table.getDateBoard(0, true)
         this.getMyColor()
+        this.success = true
       }).catch(function (error) {
         console.log(error)
       })
     },
 
     myColorConfirm(){
+      this.success = false
       axios.post(route('calendar.colorUpdate'), {
         tag_id: this.myColorDialogData.tag_id,
         tag_name: this.myColorDialogData.tag_name,
@@ -218,6 +226,7 @@ export default {
         this.active.colorSettingDialog = false
         this.$refs.date_table.getDateBoard(0, true)
         this.getMyColor()
+        this.success = true
       }).catch(function (error) {
         console.log(error)
       })
@@ -258,6 +267,15 @@ export default {
     >
     </v-select>
   </div>
+
+  <!-- アラート -->
+  <v-alert
+    v-model="success"
+    type="success"
+    title="保存しました。"
+    closable
+    class="mt-0"
+  ></v-alert>
 
   <!-- 日付テーブル -->
   <DateTable

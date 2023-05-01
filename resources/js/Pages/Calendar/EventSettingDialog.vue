@@ -81,9 +81,10 @@ import '@vuepic/vue-datepicker/dist/main.css'
           v-if="!data.is_new"
         >
           <v-card-title
-            v-if="dialogData.tag_name"
           >
             <v-btn
+              :style="{backgroundColor: dialogData.tag_color}"
+              style="color: white; font-weight: bold"
               elevation="2"
             >
               {{ dialogData.tag_name }}

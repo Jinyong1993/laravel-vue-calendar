@@ -113,7 +113,7 @@ import { mdiPlusCircle } from '@mdi/js'
 
 <template>
   <div
-    class="flex text-center mb-7"
+    class="flex text-center my-7"
   >
     <div class="flex-grow"></div>
     <button
