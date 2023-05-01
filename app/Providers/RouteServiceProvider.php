@@ -17,7 +17,7 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @var string
      */
-    public const HOME = 'calendar/main';
+    public const HOME = 'calendar/list';
 
     /**
      * Define your route model bindings, pattern filters, and other route configuration.

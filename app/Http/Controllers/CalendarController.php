@@ -9,15 +9,17 @@ use App\Models\Tag;
 
 class CalendarController extends Controller
 {
-    public function main()
-    {
-        return Inertia::render('Calendar/CalendarMain');
-    }
-
-    public function calendarList()
+    public function list()
     {
         return Inertia::render('Calendar/CalendarList', [
             'is_list' => true,
+        ]);
+    }
+
+    public function edit()
+    {
+        return Inertia::render('Calendar/CalendarMain', [
+            'is_list' => false,
         ]);
     }
 

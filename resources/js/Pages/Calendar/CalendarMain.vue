@@ -306,7 +306,7 @@ export default {
         v-if="!is_list"
       >
         <inertia-link
-          :href="route('calendar.calendarList')"
+          :href="route('calendar.list')"
         >
           <button
             class="bg-emerald-500 font-semibold text-white py-4 px-4 mx-5 rounded"
@@ -319,7 +319,7 @@ export default {
         v-else
       >
         <inertia-link
-          :href="route('calendar.main')"
+          :href="route('calendar.edit')"
         >
           <button
             class="bg-emerald-500 font-semibold text-white py-4 px-4 mx-5 rounded"
