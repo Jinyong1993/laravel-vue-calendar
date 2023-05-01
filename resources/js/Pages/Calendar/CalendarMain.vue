@@ -324,7 +324,7 @@ export default {
           <button
             class="bg-emerald-500 font-semibold text-white py-4 px-4 mx-5 rounded"
           >
-            カレンダー編集
+            イベント編集
           </button>
         </inertia-link>
       </template>
