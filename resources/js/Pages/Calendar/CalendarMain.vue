@@ -13,7 +13,6 @@ import 'js-plugin-circliful/dist/main.css'
 
 export default {
   props: {
-    date_board_query: Array,
     is_list: Boolean,
   },
 
