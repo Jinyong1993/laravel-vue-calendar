@@ -7,8 +7,6 @@ import DateTable from './DateTable.vue'
 import axios from 'axios'
 import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
-import {circliful} from 'js-plugin-circliful'
-import 'js-plugin-circliful/dist/main.css'
 
 export default {
   props: {
