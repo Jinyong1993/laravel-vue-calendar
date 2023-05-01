@@ -171,6 +171,7 @@ import { mdiPlusCircle } from '@mdi/js'
                   v-if="!readonly"
                 >
                   <v-btn
+                    class="pl-0"
                     color="green"
                     variant="text"
                     @click="$emit('add', day.day)"
