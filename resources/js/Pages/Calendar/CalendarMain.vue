@@ -265,9 +265,16 @@ export default {
 
   <!-- 日付テーブル -->
   <DateTable
+    v-if="!is_list"
+    :readonly = false
     ref="date_table"
     @add="add"
     @edit="edit"
+  ></DateTable>
+  <DateTable
+    v-else
+    :readonly = true
+    ref="date_table"
   ></DateTable>
 
   <!-- ボタン -->
@@ -285,7 +292,7 @@ export default {
       </button>
     </div>
     <div
-      v-if="!is_list"
+      v-if="is_list"
     >
       <button
         class="bg-emerald-500 font-semibold text-white py-4 px-4 mx-5 rounded"
@@ -304,7 +311,7 @@ export default {
           <button
             class="bg-emerald-500 font-semibold text-white py-4 px-4 mx-5 rounded"
           >
-            カレンダー閲覧
+            イベント一覧
           </button>
         </inertia-link>
       </template>
