@@ -28,20 +28,17 @@ export default {
 
   data() {
     return {
-      cur_date: null,
       year: null,
       month: null,
       day: null,
+      cur_date: null,
       dates: ["日", "月", "火", "水", "木", "金", "土"],
-      date_board: [],
-
-      query: [],
       myColorQuery: [],
 
       active: {
         progressDialog: false,
-        plusDialog: false,
-        eventDialog: false,
+        addDialog: false,
+        editDialog: false,
         colorSettingDialog: false,
       },
 
@@ -73,75 +70,6 @@ export default {
   },
 
   methods: {
-    getDateBoard(delta, not_refresh){
-      this.active.progressDialog = true
-      if(!not_refresh) {
-        this.dateBoard(delta)
-      }
-      axios.get(route('calendar.dateBoard'),{
-        params: {
-            year: this.year,
-            month: this.month+1,
-        }
-      }, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      }).then((response) => {
-        this.active.progressDialog = false
-        this.query = response.data
-      }).catch((error) => {
-        this.active.progressDialog = false
-        console.log(error)
-      })
-    },
-
-    dateBoard(delta){
-      // 先月
-      if(delta == -1){
-        this.month -= 1
-        if(this.month == -1){
-          this.year -= 1
-          this.month = 11
-        }
-      } else if(delta == 1){ // 来月
-        this.month += 1
-        if(this.month == 12){
-          this.year += 1
-          this.month = 0
-        }
-      }
-
-      // 日付テーブル生成
-      let date_board = []
-      let firstDay = new Date(this.year, this.month, 1).getDay()
-      let lastDate = new Date(this.year, this.month + 1, 0).getDate()
-      let day = 1
-      for(let i=0; ; i++){
-        date_board[i] = []
-        if(i == 0){ // 一週目
-          let h=0
-          for(; h<firstDay; h++){
-            date_board[i][h] = ''
-          }
-          for(; h<7; h++){
-            date_board[i][h] = {
-              day: day++,
-            }
-          }
-        } else {
-          for(let j=0; j<7; j++){
-            date_board[i][j] = {
-              day: day++,
-            }
-            if(day > lastDate){
-              return this.date_board = date_board
-            }
-          }
-        }
-      }
-    },
-
     eventConfirm(){
       axios.post(route('calendar.eventUpdate'), {
         event_id: this.eventDialogData.event_id,
@@ -156,10 +84,10 @@ export default {
           'Content-Type': 'application/json'
         }
       }).then((response) => {
-        this.active.plusDialog = false
-        this.active.eventDialog = false
+        this.active.addDialog = false
+        this.active.editDialog = false
 
-        this.getDateBoard(0, true)
+        this.$refs.date_table.getDateBoard(0)
 
       }).catch(function (error) {
 
@@ -179,38 +107,40 @@ export default {
           'Content-Type': 'application/json'
         }
       }).then((response) => {
-        this.active.eventDialog = false
-        this.getDateBoard(0, true)
-
+        this.active.editDialog = false
+        this.$refs.date_table.getDateBoard(0)
       }).catch(function (error) {
 
       });
     },
 
-    plus(day) {
+    add(day) {
       this.eventDialogData = {
-        event_id:null,
-        title:null,
-        text:null,
-        date_from:this.year + '-' + (this.month+1) + '-' + day,
-        date_to:null,
-        tag_id:null,
-        is_new:true,
+        event_id: null,
+        title: null,
+        text: null,
+        date_from: this.year + '-' + (this.month+1) + '-' + day,
+        date_to: null,
+        tag_id: null,
+        is_new: true,
       }
 
-      this.active.eventDialog = true
+      this.active.editDialog = true
     },
 
-    event(event) {
-      this.eventDialogData.event_id = event.event_id
-      this.eventDialogData.title = event.title
-      this.eventDialogData.text = event.text
-      this.eventDialogData.date_from = event.date_from
-      this.eventDialogData.date_to = event.date_to
-      this.eventDialogData.tag_color = event.tag_color
-      this.eventDialogData.tag_id = event.tag_id
+    edit(event) {
+      this.eventDialogData = {
+        event_id: event.event_id,
+        title: event.title,
+        text: event.text,
+        date_from: event.date_from,
+        date_to: event.date_to,
+        tag_color: event.tag_color,
+        tag_id: event.tag_id,
+        is_new: false,
+      }
 
-      this.active.eventDialog = true
+      this.active.editDialog = true
     },
 
     getMyColor(){
@@ -244,14 +174,14 @@ export default {
     },
 
     tagToggle(tag_id){
-      Object.keys(this.query).forEach(key => {
-        this.query[key].forEach(element => {
-          if(tag_id.includes(element.tag_id)){
-            element.hidden = 0
+      Object.keys(this.$refs.date_table.eventQuery).forEach(key => {
+        this.$refs.date_table.eventQuery[key].forEach(tag => {
+          if(tag_id.includes(tag.tag_id)){
+            tag.hidden = 0
           } else if(tag_id.length == 0){
-            element.hidden = 0
+            tag.hidden = 0
           } else {
-            element.hidden = 1
+            tag.hidden = 1
           }
         })
       })
@@ -270,11 +200,10 @@ export default {
         }
       }).then((response) => {
         this.active.colorSettingDialog = false
-
-        this.getDateBoard(0, true)
+        this.$refs.date_table.getDateBoard(0, true)
         this.getMyColor()
       }).catch(function (error) {
-
+        console.log(error)
       })
     },
 
@@ -291,8 +220,7 @@ export default {
         }
       }).then((response) => {
         this.active.colorSettingDialog = false
-
-        this.getDateBoard(0, true)
+        this.$refs.date_table.getDateBoard(0, true)
         this.getMyColor()
       }).catch(function (error) {
         console.log(error)
@@ -304,10 +232,7 @@ export default {
     let date = new Date()
     this.year = date.getFullYear()
     this.month = date.getMonth()
-
     this.cur_date = this.year + '年' + (this.month + 1) + '月' + date.getDate() + '日' + this.dates[date.getDay()] + '曜日'
-
-    this.getDateBoard(0)
     this.getMyColor()
   },
 }
@@ -340,19 +265,12 @@ export default {
 
   <!-- 日付テーブル -->
   <DateTable
-    :dates="dates"
-    :year="year"
-    :month="month"
-    :query="query"
-    :is_list="is_list"
-    v-model:date_board="date_board"
-    @previous="getDateBoard(-1)"
-    @next="getDateBoard(1)"
-    @plus="plus"
-    @event="event"
+    ref="date_table"
+    @add="add"
+    @edit="edit"
   ></DateTable>
 
-  <!-- ボタンたち -->
+  <!-- ボタン -->
   <div
     class="flex my-3 py-5 px-5"
   >
@@ -408,11 +326,11 @@ export default {
 
   <!-- イベント設定ダイアログ -->
   <EventSettingDialog
-    v-model:show="active.eventDialog"
+    v-model:show="active.editDialog"
     v-model:data="eventDialogData"
     :colors="myColorQuery"
-    @confirm="eventConfirm"
     @delete="eventDelete"
+    @confirm="eventConfirm"
   ></EventSettingDialog>
 
   <!-- プログレスダイアログ -->
