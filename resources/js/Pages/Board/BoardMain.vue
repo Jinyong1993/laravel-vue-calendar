@@ -1,9 +1,12 @@
 <script>
 import CalendarHeader from '@/Layouts/CalendarHeader.vue'
+import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiApplication } from '@mdi/js';
 
 export default {
   components: {
     CalendarHeader,
+    SvgIcon,
   },
 
   props: {
@@ -19,6 +22,7 @@ export default {
         total_page: null,
         total_row: null,
       },
+      path: mdiApplication,
     }
   },
 
@@ -55,24 +59,24 @@ export default {
     <v-table>
       <thead>
         <tr>
-          <th>
-            ID
-          </th>
-          <th>
-            タイトル
-          </th>
-          <th>
-            作成者
-          </th>
-          <th>
-            内容
-          </th>
-          <th>
-            作成日
-          </th>
-          <th>
-            操作
-          </th>
+          <th
+            style="width: 10%"
+          >ID</th>
+          <th
+            style="width: 20%"
+          >タイトル</th>
+          <th
+            style="width: 20%"
+          >作成者</th>
+          <th
+            style="width: 20%"
+          >内容</th>
+          <th
+            style="width: 20%"
+          >作成日</th>
+          <th
+            style="width: 10%"
+          >操作</th>
         </tr>
       </thead>
       <tbody>
@@ -93,6 +97,13 @@ export default {
             >{{ board.note }}</div>
           </td>
           <td>{{ board.created_at }}</td>
+          <td>
+            <inertia-link
+              :href="route('board.getBoardContent', {board_id: board.board_id})"
+            >
+              <svg-icon type="mdi" :path="path"></svg-icon>
+            </inertia-link>
+          </td>
         </tr>
       </tbody>
     </v-table>

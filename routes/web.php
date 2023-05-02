@@ -56,4 +56,5 @@ Route::prefix('calendar')->name('calendar.')->group(function () {
 Route::prefix('board')->name('board.')->group(function () {
     Route::get('list', [BoardController::class, 'list'])->name('list');
     Route::get('getBoard', [BoardController::class, 'getBoard'])->name('getBoard');
+    Route::get('getBoardContent', [BoardController::class, 'getBoardContent'])->name('getBoardContent');
 });
