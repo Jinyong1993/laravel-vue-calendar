@@ -28,7 +28,6 @@ export default {
       month: null,
       day: null,
       cur_date: null,
-      dates: ["日", "月", "火", "水", "木", "金", "土"],
       myColorQuery: [],
 
       active: {
@@ -237,7 +236,6 @@ export default {
     let date = new Date()
     this.year = date.getFullYear()
     this.month = date.getMonth()
-    this.cur_date = this.year + '年' + (this.month + 1) + '月' + date.getDate() + '日' + this.dates[date.getDay()] + '曜日'
     this.getMyColor()
   },
 }
@@ -245,10 +243,7 @@ export default {
 
 <template>
   <!-- ヘッダー -->
-  <CalendarHeader
-    :cur_date="cur_date"
-    :year="year"
-  ></CalendarHeader>
+  <CalendarHeader></CalendarHeader>
 
   <!-- 検索ダイアログ -->
   <SearchDialog
@@ -279,16 +274,9 @@ export default {
 
   <!-- 日付テーブル -->
   <DateTable
-    v-if="!is_list"
-    :readonly = false
     ref="date_table"
     @add="add"
     @edit="edit"
-  ></DateTable>
-  <DateTable
-    v-else
-    :readonly = true
-    ref="date_table"
   ></DateTable>
 
   <!-- ボタン -->

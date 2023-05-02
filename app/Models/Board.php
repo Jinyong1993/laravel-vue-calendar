@@ -10,8 +10,19 @@ class Board extends Model
 {
     protected $table = 'board';
     protected $primaryKey = 'board_id';
-    
+
     use SoftDeletes;
+
+    protected $fillable = [
+        'board_id',
+        'title',
+        'note',
+        'user_id',
+        'hit',
+        'updated_at',
+        'created_at',
+        'deleted_at',
+    ];
 
     // 1:n セレクト
     public function comments()
@@ -22,5 +33,5 @@ class Board extends Model
     {
         return $this->hasMany(BoardFile::class, 'board_id', 'board_id');
     }
-    
+
 }

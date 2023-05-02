@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\ExampleController;
 use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\BoardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,4 +51,9 @@ Route::prefix('calendar')->name('calendar.')->group(function () {
     Route::post('eventDelete', [CalendarController::class, 'eventDelete'])->name('eventDelete');
     Route::post('colorDelete', [CalendarController::class, 'colorDelete'])->name('colorDelete');
     Route::post('colorUpdate', [CalendarController::class, 'colorUpdate'])->name('colorUpdate');
+});
+
+Route::prefix('board')->name('board.')->group(function () {
+    Route::get('list', [BoardController::class, 'list'])->name('list');
+    Route::get('getBoard', [BoardController::class, 'getBoard'])->name('getBoard');
 });
