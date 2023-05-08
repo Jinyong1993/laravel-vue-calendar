@@ -107,12 +107,31 @@ export default {
         </tr>
       </tbody>
     </v-table>
-    <v-pagination
-      v-model="options.page"
-      :length="options.total_page"
-      total-visible="10"
-      @update:modelValue="getBoard()"
-    ></v-pagination>
+    <div
+      class="d-flex justify-end mx-5 my-5"
+    >
+      <div>
+        <v-pagination
+          v-model="options.page"
+          :length="options.total_page"
+          total-visible="10"
+          @update:modelValue="getBoard()"
+        ></v-pagination>
+      </div>
+      <div>
+        <inertia-link
+          :href="route('board.boardEdit')"
+        >
+          <v-btn
+            class="mt-2"
+            color="green"
+            style="font-weight: bold"
+          >
+            作成
+          </v-btn>
+        </inertia-link>
+      </div>
+    </div>
   </div>
 </template>
 

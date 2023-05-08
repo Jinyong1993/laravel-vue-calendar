@@ -14,9 +14,9 @@ export default {
     return {
       form: {
         valid: false,
-        title: this.board.title || null,
-        note: this.board.note || null,
-        board_id: this.board.board_id
+        title: null,
+        note: null,
+        board_id: null
       },
 
       rules: {
@@ -46,6 +46,14 @@ export default {
       }
     }
   },
+
+  created() {
+    if(this.board){
+      this.form.title = this.board.title
+      this.form.note = this.board.note
+      this.form.board_id = this.board.board_id
+    }
+  }
 }
 </script>
 

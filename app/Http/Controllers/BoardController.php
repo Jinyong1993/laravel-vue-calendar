@@ -51,7 +51,11 @@ class BoardController extends Controller
 
     public function boardEdit(Request $request)
     {
-        $board = Board::find($request->board_id);
+        if(isset($request->board_id)){
+            $board = Board::find($request->board_id);
+        } else {
+            $board = null;
+        }
 
         return Inertia::render('Board/BoardEdit', [
             'board' => $board,
@@ -60,12 +64,23 @@ class BoardController extends Controller
 
     public function save(Request $request)
     {
-        Board::find($request->board_id)
-        ->update([
-            'title' => $request->title,
-            'note' => $request->note,
-            'updated_at' => date('Y-m-d H:i:s'),
-        ]);
+        if($request->board_id){
+            Board::find($request->board_id)
+            ->update([
+                'title' => $request->title,
+                'note' => $request->note,
+                'updated_at' => date('Y-m-d H:i:s'),
+            ]);
+        } else {
+            $board = new Board();
+            $board->title = $request->title;
+            $board->note = $request->note;
+            $board->user_id = auth()->user()->id;
+            $board->updated_at = date('Y-m-d H:i:s');
+            $board->created_at = date('Y-m-d H:i:s');
+
+            $board->save();
+        }
 
         return redirect()->route('board.list');
     }
