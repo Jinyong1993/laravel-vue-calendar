@@ -57,4 +57,6 @@ Route::prefix('board')->name('board.')->group(function () {
     Route::get('list', [BoardController::class, 'list'])->name('list');
     Route::get('getBoard', [BoardController::class, 'getBoard'])->name('getBoard');
     Route::get('getBoardContent', [BoardController::class, 'getBoardContent'])->name('getBoardContent');
+    Route::get('boardEdit', [BoardController::class, 'boardEdit'])->name('boardEdit');
+    Route::post('save', [BoardController::class, 'save'])->name('save');
 });

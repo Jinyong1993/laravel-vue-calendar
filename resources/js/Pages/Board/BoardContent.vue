@@ -19,7 +19,7 @@ export default {
   methods: {
 
   },
-}
+};
 </script>
 
 <template>
@@ -80,7 +80,7 @@ export default {
     </div>
     <div>
       <inertia-link
-        :href="route('board.list')"
+        :href="route('board.boardEdit', {board_id: board.board_id})"
       >
         <v-btn
           class="white--text mx-5"

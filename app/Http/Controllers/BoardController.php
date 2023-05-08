@@ -48,4 +48,25 @@ class BoardController extends Controller
             'board' => $board,
         ]);
     }
+
+    public function boardEdit(Request $request)
+    {
+        $board = Board::find($request->board_id);
+
+        return Inertia::render('Board/BoardEdit', [
+            'board' => $board,
+        ]);
+    }
+
+    public function save(Request $request)
+    {
+        Board::find($request->board_id)
+        ->update([
+            'title' => $request->title,
+            'note' => $request->note,
+            'updated_at' => date('Y-m-d H:i:s'),
+        ]);
+
+        return redirect()->route('board.list');
+    }
 }
