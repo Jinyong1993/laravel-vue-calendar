@@ -217,6 +217,7 @@ export default {
         <hr>
         <div
           class="d-flex justify-end"
+          v-if="comment.user_id == this.user_id"
         >
           <div
             v-if="!comment.editing"
