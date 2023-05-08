@@ -42,10 +42,12 @@ class BoardController extends Controller
 
     public function getBoardContent(Request $request)
     {
+        $user_id = auth()->user()->id;
         $board = Board::find($request->board_id);
 
         return Inertia::render('Board/BoardContent', [
             'board' => $board,
+            'user_id' => $user_id,
         ]);
     }
 

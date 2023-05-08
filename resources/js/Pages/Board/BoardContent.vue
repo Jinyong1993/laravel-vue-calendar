@@ -8,6 +8,7 @@ export default {
 
   props: {
     board: Object,
+    user_id: Number,
   },
 
   data() {
@@ -18,17 +19,12 @@ export default {
 
   methods: {
     board_delete() {
-      console.log('d')
       this.$inertia.post(route('board.delete'), {
         board_id: this.board.board_id,
       }, {
           headers: {
           'Content-Type': 'application/json'
           }
-      }).then((response) => {
-
-      }).catch((error) => {
-        console.log(error)
       })
     },
   },
@@ -91,7 +87,9 @@ export default {
         </v-btn>
       </inertia-link>
     </div>
-    <div>
+    <div
+      v-if="this.board.user_id == this.user_id"
+    >
       <inertia-link
         :href="route('board.boardEdit', {board_id: board.board_id})"
       >
@@ -105,7 +103,9 @@ export default {
         </v-btn>
       </inertia-link>
     </div>
-    <div>
+    <div
+      v-if="this.board.user_id == this.user_id"
+    >
       <v-btn
           class="white--text mx-5"
           style="font-weight: bold"
