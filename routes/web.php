@@ -6,6 +6,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\ExampleController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\BoardController;
+use App\Http\Controllers\BoardCommentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -60,4 +61,10 @@ Route::prefix('board')->name('board.')->group(function () {
     Route::get('boardEdit', [BoardController::class, 'boardEdit'])->name('boardEdit');
     Route::post('save', [BoardController::class, 'save'])->name('save');
     Route::post('delete', [BoardController::class, 'delete'])->name('delete');
+});
+
+Route::prefix('comment')->name('comment.')->group(function () {
+    Route::post('update', [BoardCommentController::class, 'update'])->name('update');
+    Route::post('store', [BoardCommentController::class, 'store'])->name('store');
+    Route::post('delete', [BoardCommentController::class, 'delete'])->name('delete');
 });

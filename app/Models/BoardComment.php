@@ -11,4 +11,14 @@ class BoardComment extends Model
     protected $table = 'board_comment';
     protected $primaryKey = 'comment_id';
     use SoftDeletes;
+
+    protected $fillable = [
+        'comment_id',
+        'board_id',
+        'note',
+        'user_id',
+        'updated_at',
+        'created_at',
+        'deleted_at',
+    ];
 }

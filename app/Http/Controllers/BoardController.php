@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Models\Board;
+use App\Models\BoardComment;
 
 class BoardController extends Controller
 {
@@ -44,9 +45,11 @@ class BoardController extends Controller
     {
         $user_id = auth()->user()->id;
         $board = Board::find($request->board_id);
+        $board_comments = $board->comments()->get();
 
         return Inertia::render('Board/BoardContent', [
             'board' => $board,
+            'board_comments' => $board_comments,
             'user_id' => $user_id,
         ]);
     }
@@ -71,15 +74,12 @@ class BoardController extends Controller
             ->update([
                 'title' => $request->title,
                 'note' => $request->note,
-                'updated_at' => date('Y-m-d H:i:s'),
             ]);
         } else {
             $board = new Board();
             $board->title = $request->title;
             $board->note = $request->note;
             $board->user_id = auth()->user()->id;
-            $board->updated_at = date('Y-m-d H:i:s');
-            $board->created_at = date('Y-m-d H:i:s');
 
             $board->save();
         }
