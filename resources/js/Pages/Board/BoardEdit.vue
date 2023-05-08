@@ -36,10 +36,6 @@ export default {
             headers: {
             'Content-Type': 'application/json'
             }
-        }).then((response) => {
-
-        }).catch((error) => {
-          console.log(error)
         })
       } else {
         return
