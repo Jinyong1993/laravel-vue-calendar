@@ -59,4 +59,5 @@ Route::prefix('board')->name('board.')->group(function () {
     Route::get('getBoardContent', [BoardController::class, 'getBoardContent'])->name('getBoardContent');
     Route::get('boardEdit', [BoardController::class, 'boardEdit'])->name('boardEdit');
     Route::post('save', [BoardController::class, 'save'])->name('save');
+    Route::post('delete', [BoardController::class, 'delete'])->name('delete');
 });

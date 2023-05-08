@@ -17,7 +17,20 @@ export default {
   },
 
   methods: {
+    board_delete() {
+      console.log('d')
+      this.$inertia.post(route('board.delete'), {
+        board_id: this.board.board_id,
+      }, {
+          headers: {
+          'Content-Type': 'application/json'
+          }
+      }).then((response) => {
 
+      }).catch((error) => {
+        console.log(error)
+      })
+    },
   },
 };
 </script>
@@ -93,18 +106,15 @@ export default {
       </inertia-link>
     </div>
     <div>
-      <inertia-link
-        :href="route('board.list')"
-      >
-        <v-btn
+      <v-btn
           class="white--text mx-5"
           style="font-weight: bold"
           color="red"
           size="large"
-        >
+          @click="board_delete"
+      >
           削除
-        </v-btn>
-      </inertia-link>
+      </v-btn>
     </div>
   </div>
 </template>

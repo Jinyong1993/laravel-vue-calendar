@@ -69,4 +69,11 @@ class BoardController extends Controller
 
         return redirect()->route('board.list');
     }
+
+    public function delete(Request $request)
+    {
+        Board::find($request->board_id)->delete();
+
+        return redirect()->route('board.list');
+    }
 }
