@@ -22,6 +22,11 @@ export default {
       rules: {
         required: value => !!value || '必須項目です。',
       },
+
+      snackbar: {
+        error: Object.keys(this.$page.props.errors).length > 0,
+        success: !!this.$page.props.message,
+      },
     }
   },
 
@@ -52,7 +57,11 @@ export default {
         }, {
             headers: {
             'Content-Type': 'application/json'
-            }
+            },
+
+            onFinish: () => {
+              this.snackbar.success = true
+            },
         })
       } else {
         return
@@ -67,7 +76,14 @@ export default {
         }, {
             headers: {
             'Content-Type': 'application/json'
-            }
+            },
+
+            onFinish: () => {
+              this.snackbar.success = true
+            },
+
+            // 再レンダリング
+            preserveState: false,
         })
       } else {
         return
@@ -82,7 +98,11 @@ export default {
         }, {
             headers: {
             'Content-Type': 'application/json'
-            }
+            },
+
+            onFinish: () => {
+              this.snackbar.success = true
+            },
         })
       } else {
         return
@@ -95,6 +115,42 @@ export default {
 <template>
   <!-- ヘッダー -->
   <CalendarHeader></CalendarHeader>
+
+  <v-snackbar
+    v-model="snackbar.success"
+  >
+    {{ $page.props.message }}
+    <template v-slot:actions>
+      <v-btn
+        color="red"
+        variant="text"
+        @click="snackbar.success = false"
+      >
+        Close
+      </v-btn>
+    </template>
+  </v-snackbar>
+
+  <v-snackbar
+    v-model="snackbar.error"
+  >
+    <ul>
+      <li
+        v-for="error in $page.props.errors"
+      >
+        {{ error }}
+      </li>
+    </ul>
+    <template v-slot:actions>
+      <v-btn
+        color="red"
+        variant="text"
+        @click="snackbar.error = false"
+      >
+        Close
+      </v-btn>
+    </template>
+  </v-snackbar>
 
   <!-- コンテンツ -->
   <v-card
@@ -256,7 +312,7 @@ export default {
               color="green"
               @click="comment_update(comment)"
             >
-              保存d
+              保存
             </v-btn>
           </div>
         </div>

@@ -5,19 +5,23 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use App\Models\BoardComment;
 
-class BoardCommentRequest extends FormRequest
+class BoardCommentDeleteRequest extends FormRequest
 {
+    private $comment;
+
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        if (Auth::check()) {
-            return true;
-        } else {
-            return false;
-        }
+        $this->comment = BoardComment::find($this->comment_id);
+
+        return !(
+            empty($this->comment) ||
+            $this->comment->user_id != auth()->user()->id
+        );
     }
 
     /**
@@ -28,7 +32,6 @@ class BoardCommentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'note' => 'required',
             // 'title' => ['required', 'unique:posts', 'max:255'],
         ];
     }
@@ -36,7 +39,6 @@ class BoardCommentRequest extends FormRequest
     public function messages()
     {
         return [
-            'note.required' => '必須項目です',
             // 'email.email' => 'メールアドレスの形式で入力してください',
             // 'name属性.ルール名' => '変更後のメッセージ',
         ];
@@ -54,5 +56,9 @@ class BoardCommentRequest extends FormRequest
             // 'author.name' => '著者名',
             // 'author.description' => '著者詳細',
         ];
+    }
+
+    public function delete() {
+        return BoardComment::find($this->comment_id)->delete();
     }
 }

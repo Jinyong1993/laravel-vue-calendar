@@ -6,40 +6,58 @@ use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Models\Board;
 use App\Models\BoardComment;
-use App\Http\Requests\BoardCommentRequest;
+use App\Http\Requests\BoardCommentCreateRequest;
+use App\Http\Requests\BoardCommentEditRequest;
+use App\Http\Requests\BoardCommentDeleteRequest;
 
 class BoardCommentController extends Controller
 {
-    public function store(BoardCommentRequest $request)
+    public function store(BoardCommentCreateRequest $request)
     {
         try {
-            $comment = new BoardComment();
-            $comment->note = $request->note;
-            $comment->board_id = $request->board_id;
-            $comment->user_id = auth()->user()->id;
+            $request->store();
 
-            $comment->save();
+            return redirect()
+                ->back()
+                ->with('message', '保存しました。');
 
-            return redirect()->back();
-        } catch (Exception $e) {
-            return $request->messages();
+        } catch (\Throwable $th) {
+            return redirect()
+                ->back()
+                ->withErrors($request->messages());
         }
     }
 
-    public function update(BoardCommentRequest $request)
+    public function update(BoardCommentEditRequest $request)
     {
-        BoardComment::find($request->comment_id)
-        ->update([
-            'note' => $request->note,
-        ]);
+        try {
+            $request->update();
 
-        return redirect()->back();
+            return redirect()
+                ->back()
+                ->with('message', '更新しました。');
+
+        } catch(\Throwable $th) {
+            return redirect()
+                ->back()
+                ->withErrors($request->messages());
+        }
     }
 
-    public function delete(Request $request)
+    public function delete(BoardCommentDeleteRequest $request)
     {
-        BoardComment::find($request->comment_id)->delete();
+        try {
+            $request->delete();
 
-        return redirect()->back();
+            return redirect()
+                ->back()
+                ->with('message', '削除しました。');
+
+        } catch(\Throwable $th) {
+            return redirect()
+                ->back()
+                ->withErrors($request->messages());
+        }
+
     }
 }
