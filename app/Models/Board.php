@@ -13,17 +13,6 @@ class Board extends Model
 
     use SoftDeletes;
 
-    protected $fillable = [
-        'board_id',
-        'title',
-        'note',
-        'user_id',
-        'hit',
-        'updated_at',
-        'created_at',
-        'deleted_at',
-    ];
-
     // 1:n セレクト
     public function comments()
     {
@@ -34,4 +23,8 @@ class Board extends Model
         return $this->hasMany(BoardFile::class, 'board_id', 'board_id');
     }
 
+    protected $casts = [
+        'created_at'        => 'datetime:Y-m-d H:i:s',    // ←日付の形式を指定
+        'updated_at'        => 'datetime:Y-m-d H:i:s',    // ←日付の形式を指定
+    ];
 }

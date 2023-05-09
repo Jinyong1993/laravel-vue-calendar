@@ -23,7 +23,9 @@ class BoardController extends Controller
 
         $offset = $per_page * ($page_now - 1);
 
-        $query = Board::select('board.*');
+        $query = Board::select('board.*')
+        ->orderBy('board_id', 'desc')
+        ;
 
         $total_row = $query->count();
         $total_page = ceil($total_row / $per_page);
@@ -32,13 +34,11 @@ class BoardController extends Controller
         ->offset($offset)->limit($per_page)->get()->all();
         // $data = array_slice($boards, $offset, $per_page);
 
-        $result = [
+        return [
             'data' => $boards,
             'total_row' => $total_row,
             'total_page' => $total_page,
         ];
-
-        return $result;
     }
 
     public function getBoardContent(Request $request)

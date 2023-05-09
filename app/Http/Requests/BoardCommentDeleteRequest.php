@@ -6,23 +6,13 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\BoardComment;
+use App\Traits\BoardCommentRequestAuthorizeMine;
 
 class BoardCommentDeleteRequest extends FormRequest
 {
     private $comment;
 
-    /**
-     * Determine if the user is authorized to make this request.
-     */
-    public function authorize(): bool
-    {
-        $this->comment = BoardComment::find($this->comment_id);
-
-        return !(
-            empty($this->comment) ||
-            $this->comment->user_id != auth()->user()->id
-        );
-    }
+    use BoardCommentRequestAuthorizeMine;
 
     /**
      * Get the validation rules that apply to the request.
