@@ -35,7 +35,7 @@ class BoardCommentCreateRequest extends FormRequest
     public function messages()
     {
         return [
-            'note.required' => '必須項目です',
+            'note.required' => '必須項目です。',
             // 'email.email' => 'メールアドレスの形式で入力してください',
             // 'name属性.ルール名' => '変更後のメッセージ',
         ];

@@ -1,9 +1,13 @@
 <script>
 import CalendarHeader from '@/Layouts/CalendarHeader.vue'
+import ErrorSnackbar from '@/Common/ErrorSnackbar.vue'
+import SuccessSnackbar from '@/Common/SuccessSnackbar.vue'
 
 export default {
   components: {
     CalendarHeader,
+    ErrorSnackbar,
+    SuccessSnackbar,
   },
 
   props: {
@@ -116,41 +120,13 @@ export default {
   <!-- ヘッダー -->
   <CalendarHeader></CalendarHeader>
 
-  <v-snackbar
-    v-model="snackbar.success"
-  >
-    {{ $page.props.message }}
-    <template v-slot:actions>
-      <v-btn
-        color="red"
-        variant="text"
-        @click="snackbar.success = false"
-      >
-        Close
-      </v-btn>
-    </template>
-  </v-snackbar>
+  <SuccessSnackbar
+    v-model:show="snackbar.success"
+  ></SuccessSnackbar>
 
-  <v-snackbar
-    v-model="snackbar.error"
-  >
-    <ul>
-      <li
-        v-for="error in $page.props.errors"
-      >
-        {{ error }}
-      </li>
-    </ul>
-    <template v-slot:actions>
-      <v-btn
-        color="red"
-        variant="text"
-        @click="snackbar.error = false"
-      >
-        Close
-      </v-btn>
-    </template>
-  </v-snackbar>
+  <ErrorSnackbar
+    v-model:show="snackbar.error"
+  ></ErrorSnackbar>
 
   <!-- コンテンツ -->
   <v-card
