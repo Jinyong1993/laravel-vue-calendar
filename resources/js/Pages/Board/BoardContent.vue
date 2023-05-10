@@ -2,12 +2,14 @@
 import CalendarHeader from '@/Layouts/CalendarHeader.vue'
 import ErrorSnackbar from '@/Common/ErrorSnackbar.vue'
 import SuccessSnackbar from '@/Common/SuccessSnackbar.vue'
+import BoardConfirmDialog from './BoardConfirmDialog.vue'
 
 export default {
   components: {
     CalendarHeader,
     ErrorSnackbar,
     SuccessSnackbar,
+    BoardConfirmDialog,
   },
 
   props: {
@@ -31,6 +33,14 @@ export default {
         error: Object.keys(this.$page.props.errors).length > 0,
         success: !!this.$page.props.message,
       },
+
+      active: {
+        boardEditDialog: false,
+        boardDeleteDialog: false,
+        commentCreateDialog: false,
+        commentDeleteDialog: false,
+        commentEditDialog: false,
+      }
     }
   },
 
@@ -112,6 +122,10 @@ export default {
         return
       }
     },
+
+    toEdit() {
+      this.$inertia.get(route('board.boardEdit', {board_id: this.board.board_id}))
+    }
   },
 };
 </script>
@@ -183,18 +197,15 @@ export default {
     <div
       v-if="this.board.user_id == this.user_id"
     >
-      <inertia-link
-        :href="route('board.boardEdit', {board_id: board.board_id})"
+      <v-btn
+        class="white--text mx-5"
+        style="font-weight: bold"
+        color="green"
+        size="large"
+        @click="active.boardEditDialog = true"
       >
-        <v-btn
-          class="white--text mx-5"
-          style="font-weight: bold"
-          color="green"
-          size="large"
-        >
-          編集
-        </v-btn>
-      </inertia-link>
+        編集
+      </v-btn>
     </div>
     <div
       v-if="this.board.user_id == this.user_id"
@@ -204,7 +215,7 @@ export default {
           style="font-weight: bold"
           color="red"
           size="large"
-          @click="board_delete"
+          @click="active.boardDeleteDialog = true"
       >
           削除
       </v-btn>
@@ -344,6 +355,25 @@ export default {
       </v-card>
     </div>
   </v-form>
+
+  <!-- ボード確認ダイアログ -->
+  <BoardConfirmDialog
+    v-model:show="active.boardEditDialog"
+    @confirm="toEdit"
+  >
+    <template v-slot:body>
+      編集しますか？
+    </template>
+  </BoardConfirmDialog>
+
+  <BoardConfirmDialog
+    v-model:show="active.boardDeleteDialog"
+    @confirm="board_delete"
+  >
+    <template v-slot:body>
+      削除しますか？
+    </template>
+  </BoardConfirmDialog>
 </template>
 
 <style scoped>
