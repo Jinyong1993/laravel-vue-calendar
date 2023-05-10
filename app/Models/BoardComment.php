@@ -12,13 +12,8 @@ class BoardComment extends Model
     protected $primaryKey = 'comment_id';
     use SoftDeletes;
 
-    protected $fillable = [
-        'comment_id',
-        'board_id',
-        'note',
-        'user_id',
-        'updated_at',
-        'created_at',
-        'deleted_at',
+    protected $casts = [
+        'created_at' => 'datetime:Y-m-d H:i:s', // ←日付の形式を指定
+        'updated_at' => 'datetime:Y-m-d H:i:s', // ←日付の形式を指定
     ];
 }
