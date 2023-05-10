@@ -71,10 +71,6 @@ class BoardController extends Controller
             $board = null;
         }
 
-        if(!$board){
-            return redirect()->route('board.list')->withErrors('処理中にエラーが発生しました。');
-        }
-
         return Inertia::render('Board/BoardEdit', [
             'board' => $board,
         ]);
@@ -105,19 +101,22 @@ class BoardController extends Controller
         } catch(\Throwable $th) {
             return redirect()->route('board.list')->withErrors('処理中にエラーが発生しました。');
         }
-
-
     }
 
     public function delete(Request $request)
     {
-        $board = Board::find($request->board_id);
+        try {
+            $board = Board::find($request->board_id);
 
-        if(!$board){
-            return redirect()->route('board.list')->withErrors('処理中にエラーが発生しました。');
-        } else {
+            if(!$board){
+                throw new Exception();
+            }
+
             $board->delete();
+
             return redirect()->route('board.list')->with('message', '削除しました。');
+        } catch(\Throwable $th) {
+            return redirect()->route('board.list')->withErrors('処理中にエラーが発生しました。');
         }
     }
 }
