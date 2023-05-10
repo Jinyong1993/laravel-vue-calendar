@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Models\Board;
-use App\Models\BoardComment;
 use Exception;
 
 class BoardController extends Controller
@@ -79,10 +78,10 @@ class BoardController extends Controller
     public function save(Request $request)
     {
         try {
+            if(!$request->title && !$request->note){
+                return redirect()->back();
+            }
             if($request->board_id){
-                if(!$request->board_id){
-                    throw new Exception();
-                }
                 Board::find($request->board_id)
                 ->update([
                     'title' => $request->title,

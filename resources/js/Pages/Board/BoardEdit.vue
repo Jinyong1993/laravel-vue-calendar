@@ -1,9 +1,11 @@
 <script>
 import CalendarHeader from '@/Layouts/CalendarHeader.vue'
+import BoardConfirmDialog from './BoardConfirmDialog.vue'
 
 export default {
   components: {
     CalendarHeader,
+    BoardConfirmDialog,
   },
 
   props: {
@@ -22,6 +24,11 @@ export default {
       rules: {
         required: value => !!value || '必須項目です。',
       },
+
+      active: {
+        saveDialog: false,
+        backDialog: false,
+      },
     }
   },
 
@@ -35,12 +42,20 @@ export default {
         }, {
             headers: {
             'Content-Type': 'application/json'
-            }
+            },
+            onFinish: () => {
+              this.active.saveDialog = false
+            },
         })
       } else {
+        this.active.saveDialog = false
         return
       }
-    }
+    },
+
+    back() {
+      this.$inertia.get(route('board.list'))
+    },
   },
 
   created() {
@@ -88,18 +103,15 @@ export default {
     class="d-flex justify-center"
   >
     <div>
-      <inertia-link
-        :href="route('board.list')"
+      <v-btn
+        class="white--text mx-5"
+        style="font-weight: bold"
+        color="grey"
+        size="large"
+        @click="active.backDialog = true"
       >
-        <v-btn
-          class="white--text mx-5"
-          style="font-weight: bold"
-          color="grey"
-          size="large"
-        >
-          戻る
-        </v-btn>
-      </inertia-link>
+        戻る
+      </v-btn>
     </div>
     <div>
       <v-btn
@@ -107,12 +119,30 @@ export default {
         style="font-weight: bold"
         color="green"
         size="large"
-        @click="submit"
+        @click="active.saveDialog = true"
       >
         保存
       </v-btn>
     </div>
   </div>
+
+  <BoardConfirmDialog
+    v-model:show="active.backDialog"
+    @confirm="back"
+  >
+    <template v-slot:body>
+      戻りますか？
+    </template>
+  </BoardConfirmDialog>
+
+  <BoardConfirmDialog
+    v-model:show="active.saveDialog"
+    @confirm="submit"
+  >
+    <template v-slot:body>
+      保存しますか？
+    </template>
+  </BoardConfirmDialog>
 </template>
 
 <style scoped>
