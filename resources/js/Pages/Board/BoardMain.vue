@@ -2,12 +2,13 @@
 import CalendarHeader from '@/Layouts/CalendarHeader.vue'
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiApplication } from '@mdi/js';
-import { mdiArrowUpThin } from '@mdi/js';
+import BoardSortButton from './BoardSortButton.vue'
 
 export default {
   components: {
     CalendarHeader,
     SvgIcon,
+    BoardSortButton,
   },
 
   props: {
@@ -17,30 +18,32 @@ export default {
   data() {
     return {
       boards: [],
+
       options: {
         per_page: 10,
         page: 1,
         total_page: null,
         total_row: null,
+        sort: {
+          name: 'board_id',
+          order: 'desc',
+        },
       },
 
       path: {
         mdiApplication,
-        mdiArrowUpThin,
       },
 
-      sort: {
-        board_id: false,
-        title: false,
-        user_id: false,
-        note: false,
-        created_at: false,
-      },
     }
   },
 
   methods: {
-    getBoard(){
+    getBoard(resetPage) {
+      if(resetPage) {
+        // クリック時、１ページに遷移する。
+        this.options.page = 1
+      }
+
       axios.get(route('board.getBoard'),{
         params: this.options
       }, {
@@ -56,6 +59,13 @@ export default {
         console.log(error)
       })
     },
+  },
+
+  watch: {
+    // 内容が変更されるたびに、関数が実行されます。
+    'options.sort'(newSort, oldSort) {
+      this.getBoard(true)
+    }
   },
 
   created() {
@@ -76,61 +86,47 @@ export default {
             style="width: 15%"
           >
             ID
-            <v-btn
-              class="px-1"
-              variant="text"
-              size="xs-small"
-            >
-              <svg-icon type="mdi" :path="path.mdiArrowUpThin"></svg-icon>
-            </v-btn>
+            <!-- 子コンポーネントのv-modelのdefault = modelValue -->
+            <BoardSortButton
+              v-model="options.sort"
+              sortName="board_id"
+            ></BoardSortButton>
           </th>
           <th
             style="width: 20%"
           >
             タイトル
-            <v-btn
-              class="px-1"
-              variant="text"
-              size="xs-small"
-            >
-              <svg-icon type="mdi" :path="path.mdiArrowUpThin"></svg-icon>
-            </v-btn>
-          </th>
-          <th
-            style="width: 15%"
-          >
-            作成者
-            <v-btn
-              class="px-1"
-              variant="text"
-              size="xs-small"
-            >
-              <svg-icon type="mdi" :path="path.mdiArrowUpThin"></svg-icon>
-            </v-btn>
+            <BoardSortButton
+              v-model="options.sort"
+              sortName="title"
+            ></BoardSortButton>
           </th>
           <th
             style="width: 20%"
           >
+            作成者
+            <BoardSortButton
+              v-model="options.sort"
+              sortName="user_id"
+            ></BoardSortButton>
+          </th>
+          <th
+            style="width: 15%"
+          >
             内容
-            <v-btn
-              class="px-1"
-              variant="text"
-              size="xs-small"
-            >
-              <svg-icon type="mdi" :path="path.mdiArrowUpThin"></svg-icon>
-            </v-btn>
+            <BoardSortButton
+              v-model="options.sort"
+              sortName="note"
+            ></BoardSortButton>
           </th>
           <th
             style="width: 20%"
           >
             作成日
-            <v-btn
-              class="px-1"
-              variant="text"
-              size="xs-small"
-            >
-              <svg-icon type="mdi" :path="path.mdiArrowUpThin"></svg-icon>
-            </v-btn>
+            <BoardSortButton
+              v-model="options.sort"
+              sortName="created_at"
+            ></BoardSortButton>
           </th>
           <th
             style="width: 10%"

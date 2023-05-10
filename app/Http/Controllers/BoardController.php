@@ -16,16 +16,21 @@ class BoardController extends Controller
 
     public function getBoard(Request $request)
     {
+        // ページネーション
         $page_now = $request->page;
         $per_page = $request->per_page;
         $total_row = null;
         $total_page = null;
-
         $offset = $per_page * ($page_now - 1);
 
-        $query = Board::select('board.*')
-        ->orderBy('board_id', 'desc')
-        ;
+        $query = Board::select('board.*');
+
+        // ソート
+        if($request->sort) {
+            $query->orderBy($request->sort['name'], $request->sort['order']);
+        } else {
+            $query->orderBy('board_id', 'desc');
+        }
 
         $total_row = $query->count();
         $total_page = ceil($total_row / $per_page);
