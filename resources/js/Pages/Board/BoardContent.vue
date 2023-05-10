@@ -162,6 +162,55 @@ export default {
     <hr>
   </v-card>
 
+  <!-- ボタン -->
+  <div
+    class="d-flex justify-center"
+  >
+    <div>
+      <inertia-link
+        :href="route('board.list')"
+      >
+        <v-btn
+          class="white--text mx-5"
+          style="font-weight: bold"
+          color="grey"
+          size="large"
+        >
+          戻る
+        </v-btn>
+      </inertia-link>
+    </div>
+    <div
+      v-if="this.board.user_id == this.user_id"
+    >
+      <inertia-link
+        :href="route('board.boardEdit', {board_id: board.board_id})"
+      >
+        <v-btn
+          class="white--text mx-5"
+          style="font-weight: bold"
+          color="green"
+          size="large"
+        >
+          編集
+        </v-btn>
+      </inertia-link>
+    </div>
+    <div
+      v-if="this.board.user_id == this.user_id"
+    >
+      <v-btn
+          class="white--text mx-5"
+          style="font-weight: bold"
+          color="red"
+          size="large"
+          @click="board_delete"
+      >
+          削除
+      </v-btn>
+    </div>
+  </div>
+
   <!-- 新規コメント作成 -->
   <v-form
     v-model="form.valid"
@@ -295,55 +344,6 @@ export default {
       </v-card>
     </div>
   </v-form>
-
-  <!-- ボタン -->
-  <div
-    class="d-flex justify-center"
-  >
-    <div>
-      <inertia-link
-        :href="route('board.list')"
-      >
-        <v-btn
-          class="white--text mx-5"
-          style="font-weight: bold"
-          color="grey"
-          size="large"
-        >
-          戻る
-        </v-btn>
-      </inertia-link>
-    </div>
-    <div
-      v-if="this.board.user_id == this.user_id"
-    >
-      <inertia-link
-        :href="route('board.boardEdit', {board_id: board.board_id})"
-      >
-        <v-btn
-          class="white--text mx-5"
-          style="font-weight: bold"
-          color="green"
-          size="large"
-        >
-          編集
-        </v-btn>
-      </inertia-link>
-    </div>
-    <div
-      v-if="this.board.user_id == this.user_id"
-    >
-      <v-btn
-          class="white--text mx-5"
-          style="font-weight: bold"
-          color="red"
-          size="large"
-          @click="board_delete"
-      >
-          削除
-      </v-btn>
-    </div>
-  </div>
 </template>
 
 <style scoped>

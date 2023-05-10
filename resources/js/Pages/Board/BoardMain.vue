@@ -3,12 +3,16 @@ import CalendarHeader from '@/Layouts/CalendarHeader.vue'
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiApplication } from '@mdi/js';
 import BoardSortButton from './BoardSortButton.vue'
+import ErrorSnackbar from '@/Common/ErrorSnackbar.vue'
+import SuccessSnackbar from '@/Common/SuccessSnackbar.vue'
 
 export default {
   components: {
     CalendarHeader,
     SvgIcon,
     BoardSortButton,
+    ErrorSnackbar,
+    SuccessSnackbar,
   },
 
   props: {
@@ -34,6 +38,10 @@ export default {
         mdiApplication,
       },
 
+      snackbar: {
+        error: Object.keys(this.$page.props.errors).length > 0,
+        success: !!this.$page.props.message,
+      },
     }
   },
 
@@ -77,6 +85,14 @@ export default {
 <template>
   <!-- ヘッダー -->
   <CalendarHeader></CalendarHeader>
+
+  <SuccessSnackbar
+    v-model:show="snackbar.success"
+  ></SuccessSnackbar>
+
+  <ErrorSnackbar
+    v-model:show="snackbar.error"
+  ></ErrorSnackbar>
 
   <div>
     <v-table>

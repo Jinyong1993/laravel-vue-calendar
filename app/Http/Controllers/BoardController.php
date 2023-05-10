@@ -6,6 +6,7 @@ use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Models\Board;
 use App\Models\BoardComment;
+use Exception;
 
 class BoardController extends Controller
 {
@@ -50,6 +51,9 @@ class BoardController extends Controller
     {
         $user_id = auth()->user()->id;
         $board = Board::find($request->board_id);
+        if(!$board){
+            return redirect()->route('board.list')->withErrors('処理中にエラーが発生しました。');
+        }
         $board_comments = $board->comments()->get();
 
         return Inertia::render('Board/BoardContent', [
@@ -67,6 +71,10 @@ class BoardController extends Controller
             $board = null;
         }
 
+        if(!$board){
+            return redirect()->route('board.list')->withErrors('処理中にエラーが発生しました。');
+        }
+
         return Inertia::render('Board/BoardEdit', [
             'board' => $board,
         ]);
@@ -74,28 +82,42 @@ class BoardController extends Controller
 
     public function save(Request $request)
     {
-        if($request->board_id){
-            Board::find($request->board_id)
-            ->update([
-                'title' => $request->title,
-                'note' => $request->note,
-            ]);
-        } else {
-            $board = new Board();
-            $board->title = $request->title;
-            $board->note = $request->note;
-            $board->user_id = auth()->user()->id;
+        try {
+            if($request->board_id){
+                if(!$request->board_id){
+                    throw new Exception();
+                }
+                Board::find($request->board_id)
+                ->update([
+                    'title' => $request->title,
+                    'note' => $request->note,
+                ]);
+            } else {
+                $board = new Board();
+                $board->title = $request->title;
+                $board->note = $request->note;
+                $board->user_id = auth()->user()->id;
 
-            $board->save();
+                $board->save();
+            }
+
+            return redirect()->route('board.list')->with('message', '保存しました。');
+        } catch(\Throwable $th) {
+            return redirect()->route('board.list')->withErrors('処理中にエラーが発生しました。');
         }
 
-        return redirect()->route('board.list');
+
     }
 
     public function delete(Request $request)
     {
-        Board::find($request->board_id)->delete();
+        $board = Board::find($request->board_id);
 
-        return redirect()->route('board.list');
+        if(!$board){
+            return redirect()->route('board.list')->withErrors('処理中にエラーが発生しました。');
+        } else {
+            $board->delete();
+            return redirect()->route('board.list')->with('message', '削除しました。');
+        }
     }
 }
