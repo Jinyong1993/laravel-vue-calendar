@@ -50,8 +50,12 @@ class BoardCommentEditRequest extends FormRequest
     }
 
     public function update() {
-        return $this->comment->update([
-            'note' => $this->note,
-        ]);
+        $this->comment->note = $this->note;
+        return $this->comment->save();
+
+        // return BoardComment::where('comment_id', $this->comment->comment_id)
+        // ->update([
+        //     'note' => $this->note
+        // ]);
     }
 }
