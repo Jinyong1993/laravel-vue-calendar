@@ -3,6 +3,7 @@ import CalendarHeader from '@/Layouts/CalendarHeader.vue'
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiApplication } from '@mdi/js';
 import { mdiArrowUpThin } from '@mdi/js';
+import { mdiArrowDownThin } from '@mdi/js';
 
 export default {
   components: {
@@ -22,11 +23,14 @@ export default {
         page: 1,
         total_page: null,
         total_row: null,
+        sort_target: null,
+        order: null,
       },
 
       path: {
         mdiApplication,
         mdiArrowUpThin,
+        mdiArrowDownThin,
       },
 
       sort: {
@@ -40,9 +44,9 @@ export default {
   },
 
   methods: {
-    getBoard(){
+    getBoard(sort_target = null, order = null) {
       axios.get(route('board.getBoard'),{
-        params: this.options
+        params: this.options,
       }, {
         headers: {
           'Content-Type': 'application/json'
@@ -56,6 +60,59 @@ export default {
         console.log(error)
       })
     },
+
+    toggleSort(event) {
+      if(event == 1) {
+        this.sort.board_id = !this.sort.board_id
+        this.options.sort_target = 'board_id'
+        if(this.options.order == 'asc'){
+          this.options.order = 'desc'
+        } else {
+          this.options.order = 'asc'
+        }
+        this.getBoard()
+      }
+      if(event == 2) {
+        this.sort.title = !this.sort.title
+        this.options.sort_target = 'title'
+        if(this.options.order == 'asc'){
+          this.options.order = 'desc'
+        } else {
+          this.options.order = 'asc'
+        }
+        this.getBoard()
+      }
+      if(event == 3) {
+        this.sort.user_id = !this.sort.user_id
+        this.options.sort_target = 'user_id'
+        if(this.options.order == 'asc'){
+          this.options.order = 'desc'
+        } else {
+          this.options.order = 'asc'
+        }
+        this.getBoard()
+      }
+      if(event == 4) {
+        this.sort.note = !this.sort.note
+        this.options.sort_target = 'note'
+        if(this.options.order == 'asc'){
+          this.options.order = 'desc'
+        } else {
+          this.options.order = 'asc'
+        }
+        this.getBoard()
+      }
+      if(event == 5) {
+        this.sort.created_at = !this.sort.created_at
+        this.options.sort_target = 'created_at'
+        if(this.options.order == 'asc'){
+          this.options.order = 'desc'
+        } else {
+          this.options.order = 'asc'
+        }
+        this.getBoard()
+      }
+    }
   },
 
   created() {
@@ -80,8 +137,18 @@ export default {
               class="px-1"
               variant="text"
               size="xs-small"
+              @click="toggleSort(1)"
             >
-              <svg-icon type="mdi" :path="path.mdiArrowUpThin"></svg-icon>
+              <svg-icon
+                v-if="sort.board_id"
+                type="mdi"
+                :path="path.mdiArrowUpThin"
+              ></svg-icon>
+              <svg-icon
+                v-else
+                type="mdi"
+                :path="path.mdiArrowDownThin"
+              ></svg-icon>
             </v-btn>
           </th>
           <th
@@ -92,8 +159,18 @@ export default {
               class="px-1"
               variant="text"
               size="xs-small"
+              @click="toggleSort(2)"
             >
-              <svg-icon type="mdi" :path="path.mdiArrowUpThin"></svg-icon>
+              <svg-icon
+                v-if="sort.title"
+                type="mdi"
+                :path="path.mdiArrowUpThin"
+              ></svg-icon>
+              <svg-icon
+                v-else
+                type="mdi"
+                :path="path.mdiArrowDownThin"
+              ></svg-icon>
             </v-btn>
           </th>
           <th
@@ -104,8 +181,18 @@ export default {
               class="px-1"
               variant="text"
               size="xs-small"
+              @click="toggleSort(3)"
             >
-              <svg-icon type="mdi" :path="path.mdiArrowUpThin"></svg-icon>
+              <svg-icon
+                v-if="sort.user_id"
+                type="mdi"
+                :path="path.mdiArrowUpThin"
+              ></svg-icon>
+              <svg-icon
+                v-else
+                type="mdi"
+                :path="path.mdiArrowDownThin"
+              ></svg-icon>
             </v-btn>
           </th>
           <th
@@ -116,8 +203,18 @@ export default {
               class="px-1"
               variant="text"
               size="xs-small"
+              @click="toggleSort(4)"
             >
-              <svg-icon type="mdi" :path="path.mdiArrowUpThin"></svg-icon>
+              <svg-icon
+                v-if="sort.note"
+                type="mdi"
+                :path="path.mdiArrowUpThin"
+              ></svg-icon>
+              <svg-icon
+                v-else
+                type="mdi"
+                :path="path.mdiArrowDownThin"
+              ></svg-icon>
             </v-btn>
           </th>
           <th
@@ -128,8 +225,18 @@ export default {
               class="px-1"
               variant="text"
               size="xs-small"
+              @click="toggleSort(5)"
             >
-              <svg-icon type="mdi" :path="path.mdiArrowUpThin"></svg-icon>
+              <svg-icon
+                v-if="sort.created_at"
+                type="mdi"
+                :path="path.mdiArrowUpThin"
+              ></svg-icon>
+              <svg-icon
+                v-else
+                type="mdi"
+                :path="path.mdiArrowDownThin"
+              ></svg-icon>
             </v-btn>
           </th>
           <th

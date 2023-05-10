@@ -23,9 +23,18 @@ class BoardController extends Controller
 
         $offset = $per_page * ($page_now - 1);
 
-        $query = Board::select('board.*')
-        ->orderBy('board_id', 'desc')
-        ;
+        $query = Board::select('board.*');
+
+        if($request->sort_target){
+            if($request->order == 'asc'){
+                $request->order = 'desc';
+            } else {
+                $request->order = 'asc';
+            }
+            $query->orderBy($request->sort_target, $request->order);
+        } else {
+            $query->orderBy('board_id', 'desc');
+        }
 
         $total_row = $query->count();
         $total_page = ceil($total_row / $per_page);
