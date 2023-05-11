@@ -17,8 +17,8 @@ class BoardController extends Controller
     public function getBoard(Request $request)
     {
         // ページネーション
-        $page_now = $request->page;
-        $per_page = $request->per_page;
+        $page_now = $request->page['page_now'];
+        $per_page = $request->page['per_page'];
         $total_row = null;
         $total_page = null;
         $offset = $per_page * ($page_now - 1);
