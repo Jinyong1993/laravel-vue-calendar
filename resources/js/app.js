@@ -5,6 +5,7 @@ import { createApp, h } from 'vue';
 import { createInertiaApp, Link } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
+import PortalVue from 'portal-vue'
 
 // Vuetify
 import 'vuetify/styles'
@@ -32,6 +33,7 @@ createInertiaApp({
             .use(ZiggyVue, Ziggy)
             .component('InertiaLink', Link)
             .use(vuetify)
+            .use(PortalVue)
             .component('VueDatePicker', VueDatePicker)
             .mount(el);
     },

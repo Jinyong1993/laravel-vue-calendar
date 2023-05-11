@@ -1,5 +1,5 @@
 <script>
-import CalendarHeader from '@/Layouts/CalendarHeader.vue'
+import CalendarLayout from '@/Layouts/CalendarLayout.vue'
 import SearchDialog from './CalendarSearchDialog.vue'
 import MyColorSettingDialog from './MyColorSettingDialog.vue'
 import EventSettingDialog from './EventSettingDialog.vue'
@@ -14,7 +14,7 @@ export default {
   },
 
   components: {
-    CalendarHeader,
+    CalendarLayout,
     SearchDialog,
     VueDatePicker,
     MyColorSettingDialog,
@@ -243,15 +243,14 @@ export default {
 
 <template>
   <!-- ヘッダー -->
-  <CalendarHeader></CalendarHeader>
+  <CalendarLayout>
+    <!-- 検索ダイアログ -->
+    <SearchDialog
+      ref="dialogSearch"
+    ></SearchDialog>
 
-  <!-- 検索ダイアログ -->
-  <SearchDialog
-    ref="dialogSearch"
-  ></SearchDialog>
-
-  <div class="mt-8">
-    <v-select
+    <div class="mt-8">
+      <v-select
       v-model="tagData.tag_id"
       :items="this.myColorQuery"
       label="マイカラー"
@@ -259,109 +258,110 @@ export default {
       item-value="tag_id"
       multiple
       @update:modelValue="tagToggle(tagData.tag_id)"
-    >
-    </v-select>
-  </div>
-
-  <!-- アラート -->
-  <v-alert
-    v-model="success"
-    type="success"
-    title="保存しました。"
-    closable
-    class="mt-0"
-  ></v-alert>
-
-  <!-- 日付テーブル -->
-  <DateTable
-    ref="date_table"
-    @add="add"
-    @edit="edit"
-  ></DateTable>
-
-  <!-- ボタン -->
-  <div
-    class="flex my-3 py-5 px-5"
-  >
-    <div
-      v-if="!is_list"
-    >
-      <button
-        class="bg-emerald-500 font-semibold text-white py-4 px-4 mx-5 rounded"
-        @click="openMyColorSettingDialog"
       >
-        マイカラー設定
-      </button>
+      </v-select>
     </div>
+
+    <!-- アラート -->
+    <v-alert
+      v-model="success"
+      type="success"
+      title="保存しました。"
+      closable
+      class="mt-0"
+    ></v-alert>
+
+    <!-- 日付テーブル -->
+    <DateTable
+      ref="date_table"
+      @add="add"
+      @edit="edit"
+    ></DateTable>
+
+    <!-- ボタン -->
     <div
-      v-if="is_list"
+      class="flex my-3 py-5 px-5"
     >
-      <button
-        class="bg-emerald-500 font-semibold text-white py-4 px-4 mx-5 rounded"
-        @click="openSearchDialog"
-      >
-        イベント検索
-      </button>
-    </div>
-    <div>
-      <template
+      <div
         v-if="!is_list"
       >
-        <inertia-link
-          :href="route('calendar.list')"
+        <button
+          class="bg-emerald-500 font-semibold text-white py-4 px-4 mx-5 rounded"
+          @click="openMyColorSettingDialog"
         >
-          <button
-            class="bg-emerald-500 font-semibold text-white py-4 px-4 mx-5 rounded"
-          >
-            イベント一覧
-          </button>
-        </inertia-link>
-      </template>
-      <template
-        v-else
+          マイカラー設定
+        </button>
+      </div>
+      <div
+        v-if="is_list"
       >
-        <inertia-link
-          :href="route('calendar.edit')"
+        <button
+          class="bg-emerald-500 font-semibold text-white py-4 px-4 mx-5 rounded"
+          @click="openSearchDialog"
         >
-          <button
-            class="bg-emerald-500 font-semibold text-white py-4 px-4 mx-5 rounded"
+          イベント検索
+        </button>
+      </div>
+      <div>
+        <template
+          v-if="!is_list"
+        >
+          <inertia-link
+            :href="route('calendar.list')"
           >
-            イベント編集
-          </button>
-        </inertia-link>
-      </template>
+            <button
+              class="bg-emerald-500 font-semibold text-white py-4 px-4 mx-5 rounded"
+            >
+              イベント一覧
+            </button>
+          </inertia-link>
+        </template>
+        <template
+          v-else
+        >
+          <inertia-link
+            :href="route('calendar.edit')"
+          >
+            <button
+              class="bg-emerald-500 font-semibold text-white py-4 px-4 mx-5 rounded"
+            >
+              イベント編集
+            </button>
+          </inertia-link>
+        </template>
+      </div>
     </div>
-  </div>
 
-  <!-- イベント設定ダイアログ -->
-  <EventSettingDialog
-    v-model:show="active.editDialog"
-    v-model:data="eventDialogData"
-    :colors="myColorQuery"
-    @delete="eventDelete"
-    @confirm="eventConfirm"
-  ></EventSettingDialog>
+    <!-- イベント設定ダイアログ -->
+    <EventSettingDialog
+      v-model:show="active.editDialog"
+      v-model:data="eventDialogData"
+      :colors="myColorQuery"
+      @delete="eventDelete"
+      @confirm="eventConfirm"
+    ></EventSettingDialog>
 
-  <!-- プログレスダイアログ -->
-  <v-row justify="center">
-    <v-dialog
-      v-model="active.progressDialog"
-    >
+    <!-- プログレスダイアログ -->
+    <v-row justify="center">
+      <v-dialog
+        v-model="active.progressDialog"
+      >
       <div class="text-center">
         <v-progress-circular
-          indeterminate
-          color="primary"
+        indeterminate
+        color="primary"
         ></v-progress-circular>
       </div>
-    </v-dialog>
-  </v-row>
+      </v-dialog>
+    </v-row>
 
-  <!-- マイカラー設定ダイアログ -->
-  <MyColorSettingDialog
-    v-model:show="active.colorSettingDialog"
-    v-model:data="myColorDialogData"
-    :colors="myColorQuery"
-    @colorDelete="myColorDelete"
-    @colorConfirm="myColorConfirm"
-  ></MyColorSettingDialog>
+    <!-- マイカラー設定ダイアログ -->
+    <MyColorSettingDialog
+      v-model:show="active.colorSettingDialog"
+      v-model:data="myColorDialogData"
+      :colors="myColorQuery"
+      @colorDelete="myColorDelete"
+      @colorConfirm="myColorConfirm"
+    ></MyColorSettingDialog>
+  </CalendarLayout>
 </template>

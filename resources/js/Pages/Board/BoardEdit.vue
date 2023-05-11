@@ -1,10 +1,10 @@
 <script>
-import CalendarHeader from '@/Layouts/CalendarHeader.vue'
+import CalendarLayout from '@/Layouts/CalendarLayout.vue'
 import BoardConfirmDialog from './BoardConfirmDialog.vue'
 
 export default {
   components: {
-    CalendarHeader,
+    CalendarLayout,
     BoardConfirmDialog,
   },
 
@@ -70,79 +70,80 @@ export default {
 
 <template>
   <!-- ヘッダー -->
-  <CalendarHeader></CalendarHeader>
-  <!-- コンテンツ -->
-  <v-form
-    v-model="form.valid"
-    ref="form"
-    @submit.prevent
-  >
-    <v-card
-      class="text-center px-5 py-5 my-5 mx-5"
-      style="border-radius: 15px;"
-      elevation="5"
+  <CalendarLayout>
+    <!-- コンテンツ -->
+    <v-form
+      v-model="form.valid"
+      ref="form"
+      @submit.prevent
     >
-      <v-text-field
-        v-model="form.title"
-        label="タイトル"
-        type="text"
-        :rules="[rules.required]"
-        required
-      ></v-text-field>
-      <v-textarea
-        v-model="form.note"
-        label="内容"
-        :rules="[rules.required]"
-        required
-      ></v-textarea>
-    </v-card>
-  </v-form>
-
-  <!-- ボタン -->
-  <div
-    class="d-flex justify-center"
-  >
-    <div>
-      <v-btn
-        class="white--text mx-5"
-        style="font-weight: bold"
-        color="grey"
-        size="large"
-        @click="active.backDialog = true"
+      <v-card
+        class="text-center px-5 py-5 my-5 mx-5"
+        style="border-radius: 15px;"
+        elevation="5"
       >
-        戻る
-      </v-btn>
-    </div>
-    <div>
-      <v-btn
-        class="white--text mx-5"
-        style="font-weight: bold"
-        color="green"
-        size="large"
-        @click="active.saveDialog = true"
-      >
-        保存
-      </v-btn>
-    </div>
-  </div>
+        <v-text-field
+          v-model="form.title"
+          label="タイトル"
+          type="text"
+          :rules="[rules.required]"
+          required
+        ></v-text-field>
+        <v-textarea
+          v-model="form.note"
+          label="内容"
+          :rules="[rules.required]"
+          required
+        ></v-textarea>
+      </v-card>
+    </v-form>
 
-  <BoardConfirmDialog
-    v-model:show="active.backDialog"
-    @confirm="back"
-  >
-    <template v-slot:body>
-      戻りますか？
-    </template>
-  </BoardConfirmDialog>
+    <!-- ボタン -->
+    <div
+      class="d-flex justify-center"
+    >
+      <div>
+        <v-btn
+          class="white--text mx-5"
+          style="font-weight: bold"
+          color="grey"
+          size="large"
+          @click="active.backDialog = true"
+        >
+          戻る
+        </v-btn>
+      </div>
+      <div>
+        <v-btn
+          class="white--text mx-5"
+          style="font-weight: bold"
+          color="green"
+          size="large"
+          @click="active.saveDialog = true"
+        >
+          保存
+        </v-btn>
+      </div>
+    </div>
 
-  <BoardConfirmDialog
-    v-model:show="active.saveDialog"
-    @confirm="submit"
-  >
-    <template v-slot:body>
-      保存しますか？
-    </template>
-  </BoardConfirmDialog>
+    <BoardConfirmDialog
+      v-model:show="active.backDialog"
+      @confirm="back"
+    >
+      <template v-slot:body>
+        戻りますか？
+      </template>
+    </BoardConfirmDialog>
+
+    <BoardConfirmDialog
+      v-model:show="active.saveDialog"
+      @confirm="submit"
+    >
+      <template v-slot:body>
+        保存しますか？
+      </template>
+    </BoardConfirmDialog>
+  </CalendarLayout>
 </template>
 
 <style scoped>
