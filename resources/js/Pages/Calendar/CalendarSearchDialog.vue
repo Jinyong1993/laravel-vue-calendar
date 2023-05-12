@@ -1,5 +1,5 @@
 <script>
-import { VDataTable } from 'vuetify/labs/VDataTable'
+import CustomTable from '@/Common/CustomTable.vue'
 
   export default {
     data () {
@@ -7,13 +7,49 @@ import { VDataTable } from 'vuetify/labs/VDataTable'
         searchDialog: false,
         search_title: null,
         searchData: [],
-        itemsPerPage: 10,
+
+        options: {
+          search: {
+            title: null
+          },
+          page: {
+            per_page: 10,
+            page_now: 1,
+            total_page: null,
+            total_row: null,
+          },
+          sort: {
+            name: 'event_id',
+            order: 'desc',
+          },
+        },
+
         headers: [
-          {title: 'イベントID', value: 'event_id', sortable: true},
-          {title: 'タイトル', value: 'title', sortable: true},
-          {title: '期間 (from)', value: 'date_from', sortable: true},
-          {title: '期間 (to)', value: 'date_to', sortable: true},
-          { text: '', value: 'actions', sortable: false },
+          {
+            name: 'イベントID',
+            value: 'event_id',
+            sortable: true
+          },
+          {
+            name: 'タイトル',
+            value: 'title',
+            sortable: true
+          },
+          {
+            name: '期間 (from)',
+            value: 'date_from',
+            sortable: true
+          },
+          {
+            name: '期間 (to)',
+            value: 'date_to',
+            sortable: true
+          },
+          {
+            name: '',
+            value: 'actions',
+            sortable: false
+          },
         ],
       }
     },
@@ -23,15 +59,13 @@ import { VDataTable } from 'vuetify/labs/VDataTable'
     },
 
     components: {
-      VDataTable,
+      CustomTable,
     },
 
     methods: {
       search(){
         axios.get(route('calendar.searchEvent'), {
-          params: {
-            search_title: this.search_title,
-          }
+          params: this.options,
         },
         {
         headers: {
@@ -42,6 +76,13 @@ import { VDataTable } from 'vuetify/labs/VDataTable'
         }).catch((error) => {
           console.log(error)
         })
+      },
+    },
+
+    watch: {
+      // 内容が変更されるたびに、関数が実行されます。
+      'options.sort'(newSort, oldSort) {
+        this.search()
       },
     },
   }
@@ -70,7 +111,7 @@ import { VDataTable } from 'vuetify/labs/VDataTable'
         </div>
         <div>
           <v-text-field
-            v-model="search_title"
+            v-model="options.search.title"
             label="イベント名"
             hide-details="auto"
           ></v-text-field>
@@ -87,13 +128,13 @@ import { VDataTable } from 'vuetify/labs/VDataTable'
           </v-btn>
           <v-spacer></v-spacer>
         </div>
-        <v-data-table
-          v-model:items-per-page="itemsPerPage"
+        <custom-table
           :headers="headers"
-          :items="searchData"
-          item-value="event_id"
-          class="elevation-1"
-        ></v-data-table>
+          :contents="searchData"
+          v-model:sort="options.sort"
+          sortable
+        >
+        </custom-table>
         <div
           class="mt-2"
         >

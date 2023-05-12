@@ -136,6 +136,7 @@ export default {
       v-model:sort="options.sort"
       v-model:page="options.page"
       pageable
+      sortable
       @change="getBoard()"
     >
       <template v-slot:title="item">

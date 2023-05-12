@@ -15,6 +15,7 @@ import BoardSortButton from '@/Pages/Board/BoardSortButton.vue'
       page: Object,
       contents: Object,
       pageable: Boolean,
+      sortable: Boolean,
       tableClass: String,
       tdClass: String,
     },
@@ -67,7 +68,7 @@ import BoardSortButton from '@/Pages/Board/BoardSortButton.vue'
             :key="header.key"
           >{{ header.name }}
             <BoardSortButton
-              v-if="header.sortable"
+              v-if="header.sortable && sortable"
               v-model="sortValue"
               :sortName="header.value"
             ></BoardSortButton>

@@ -163,10 +163,23 @@ class CalendarController extends Controller
 
     public function searchEvent(Request $request)
     {
+        // ページネーション
+        // $page_now = $request->page['page_now'];
+        // $per_page = $request->page['per_page'];
+        // $total_row = null;
+        // $total_page = null;
+        // $offset = $per_page * ($page_now - 1);
+
         $q = Event::select('event.*')
         ->where('event.user_id', auth()->user()->id)
-        ->where('event.title', 'LIKE', '%'.$request->search_title.'%')
-        ->get()->all();
+        ->where('event.title', 'LIKE', '%'.$request->search['title'].'%')->get()->all();
+
+        // ソート
+        // if($request->sort) {
+        //     $q->orderBy($request->sort['name'], $request->sort['order'])->get()->all();
+        // } else {
+        //     $q->orderBy('event_id', 'desc')->get()->all();
+        // }
 
         return $q;
     }
