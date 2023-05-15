@@ -5,7 +5,6 @@ import CustomTable from '@/Common/CustomTable.vue'
     data () {
       return {
         searchDialog: false,
-        search_title: null,
         searchData: [],
 
         options: {
@@ -28,6 +27,7 @@ import CustomTable from '@/Common/CustomTable.vue'
           {
             name: 'イベントID',
             value: 'event_id',
+            key: 'event_id',
             sortable: true
           },
           {
@@ -131,8 +131,8 @@ import CustomTable from '@/Common/CustomTable.vue'
         <custom-table
           :headers="headers"
           :contents="searchData"
-          v-model:sort="options.sort"
-          sortable
+          customPageable
+          :perPage="5"
         >
         </custom-table>
         <div
