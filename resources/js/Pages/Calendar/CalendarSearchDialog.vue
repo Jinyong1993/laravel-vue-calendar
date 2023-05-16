@@ -5,7 +5,7 @@ import CustomTable from '@/Common/CustomTable.vue'
     data () {
       return {
         searchDialog: false,
-        searchData: [],
+        searchResultData: [],
 
         options: {
           search: {
@@ -72,17 +72,10 @@ import CustomTable from '@/Common/CustomTable.vue'
           'Content-Type': 'application/json'
         }
         }).then((response) => {
-          this.searchData = response.data
+          this.searchResultData = response.data
         }).catch((error) => {
           console.log(error)
         })
-      },
-    },
-
-    watch: {
-      // 内容が変更されるたびに、関数が実行されます。
-      'options.sort'(newSort, oldSort) {
-        this.search()
       },
     },
   }
@@ -128,13 +121,14 @@ import CustomTable from '@/Common/CustomTable.vue'
           </v-btn>
           <v-spacer></v-spacer>
         </div>
-        <custom-table
+        <CustomTable
           :headers="headers"
-          :contents="searchData"
+          :contents="searchResultData"
           customPageable
           :perPage="5"
+          sortable
         >
-        </custom-table>
+        </CustomTable>
         <div
           class="mt-2"
         >
