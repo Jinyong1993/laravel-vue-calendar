@@ -1,5 +1,7 @@
 <script>
 import CustomTable from '@/Common/CustomTable.vue'
+import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiCalendar } from '@mdi/js';
 
   export default {
     data () {
@@ -46,11 +48,15 @@ import CustomTable from '@/Common/CustomTable.vue'
             sortable: true
           },
           {
-            name: '',
+            name: '操作',
             value: 'actions',
             sortable: false
           },
         ],
+
+        path: {
+          mdiCalendar,
+        },
       }
     },
 
@@ -60,6 +66,7 @@ import CustomTable from '@/Common/CustomTable.vue'
 
     components: {
       CustomTable,
+      SvgIcon,
     },
 
     methods: {
@@ -128,6 +135,15 @@ import CustomTable from '@/Common/CustomTable.vue'
           :perPage="5"
           sortable
         >
+          <template v-slot:actions="item">
+            <inertia-link
+              :href="route('calendar.list', {event_id: item.content.event_id})"
+            >
+              <v-btn variant="text">
+                <svg-icon type="mdi" :path="path.mdiCalendar"></svg-icon>
+              </v-btn>
+            </inertia-link>
+          </template>
         </CustomTable>
         <div
           class="mt-2"

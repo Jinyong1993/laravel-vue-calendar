@@ -11,6 +11,7 @@ import '@vuepic/vue-datepicker/dist/main.css'
 export default {
   props: {
     is_list: Boolean,
+    event_id_url: String,
   },
 
   components: {
@@ -276,6 +277,7 @@ export default {
       ref="date_table"
       @add="add"
       @edit="edit"
+      :event_id_url="event_id_url"
     ></DateTable>
 
     <!-- ボタン -->

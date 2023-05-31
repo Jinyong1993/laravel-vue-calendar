@@ -9,10 +9,12 @@ use App\Models\Tag;
 
 class CalendarController extends Controller
 {
-    public function list()
+    public function list(Request $request)
     {
+        $event_id = $request->event_id;
         return Inertia::render('Calendar/CalendarList', [
             'is_list' => true,
+            'event_id_url' => $event_id,
         ]);
     }
 
@@ -27,6 +29,7 @@ class CalendarController extends Controller
     {
         $year = $request->year ?? date('Y');
         $month = $request->month ?? date('n');
+        $event_id = $request->event_id;
         $query = array();
 
         // フォーメット　01,02...12
@@ -35,6 +38,7 @@ class CalendarController extends Controller
         $first_date = "$year-$month-01";
         $time_stamp = strtotime($first_date);
         $last_date = date('Y-m-t', $time_stamp);
+
 
         $selects = Event::where('event.user_id', auth()->user()->id)
                         ->where('event.date_from', '<=', $last_date)
@@ -163,23 +167,9 @@ class CalendarController extends Controller
 
     public function searchEvent(Request $request)
     {
-        // ページネーション
-        // $page_now = $request->page['page_now'];
-        // $per_page = $request->page['per_page'];
-        // $total_row = null;
-        // $total_page = null;
-        // $offset = $per_page * ($page_now - 1);
-
         $q = Event::select('event.*')
         ->where('event.user_id', auth()->user()->id)
         ->where('event.title', 'LIKE', '%'.$request->search['title'].'%')->get()->all();
-
-        // ソート
-        // if($request->sort) {
-        //     $q->orderBy($request->sort['name'], $request->sort['order'])->get()->all();
-        // } else {
-        //     $q->orderBy('event_id', 'desc')->get()->all();
-        // }
 
         return $q;
     }
