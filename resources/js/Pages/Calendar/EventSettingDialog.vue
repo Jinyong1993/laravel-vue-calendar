@@ -127,6 +127,7 @@ import '@vuepic/vue-datepicker/dist/main.css'
           show-now-button
           required
           :enable-time-picker="false"
+          locale="jp"
           now-button-label="本日"
           :esc-close="true"
           teleport-center
@@ -138,6 +139,7 @@ import '@vuepic/vue-datepicker/dist/main.css'
           model-type="yyyy-MM-dd"
           :format="dialogData.date_to"
           auto-apply
+          locale="jp"
           placeholder="日付を選択する"
           required
           :enable-time-picker="false"

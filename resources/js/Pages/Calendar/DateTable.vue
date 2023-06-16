@@ -1,7 +1,9 @@
 <script>
 import SvgIcon from '@jamescoyle/vue-icon'
 import VueDatePicker from '@vuepic/vue-datepicker'
-import { mdiPlusCircle } from '@mdi/js'
+import { mdiPlusCircle, mdiSvg } from '@mdi/js'
+import { mdiChevronLeft } from '@mdi/js';
+import { mdiChevronRight } from '@mdi/js';
 
   export default {
     data () {
@@ -9,13 +11,18 @@ import { mdiPlusCircle } from '@mdi/js'
         dates: ["日", "月", "火", "水", "木", "金", "土"],
         month: null,
         year: null,
-        path: mdiPlusCircle,
+        path: {
+          mdiPlusCircle,
+          mdiChevronLeft,
+          mdiChevronRight,
+        },
         eventQuery: [],
         date_board: [],
         active: {
           progressDialog: false,
         },
-        dateSearch: null
+        dateSearch: null,
+        datePicker: false,
       }
     },
 
@@ -39,9 +46,9 @@ import { mdiPlusCircle } from '@mdi/js'
     },
 
     components: {
-      VueDatePicker,
-      SvgIcon,
-    },
+    VueDatePicker,
+    SvgIcon,
+},
 
     watch: {
       dateSearch(val, oldVal) {
@@ -53,6 +60,7 @@ import { mdiPlusCircle } from '@mdi/js'
           this.month = date.getMonth()
           this.dateBoard()
           this.getDateBoard(0)
+          this.datePicker = false
         }
       },
 
@@ -140,42 +148,68 @@ import { mdiPlusCircle } from '@mdi/js'
 </script>
 
 <template>
-  <div>
-    <VueDatePicker
-      v-model="dateSearch"
-      :month-change-on-scroll="false"
-      model-type="yyyy-MM"
-      :format="dateSearch"
-      month-picker
-      auto-apply
-      placeholder="日付を選択する"
-      :enable-time-picker="false"
-      :esc-close="true"
-    ></VueDatePicker>
-  </div>
   <div
-    class="flex text-center my-7"
+    class="flex text-center"
   >
     <div class="flex-grow"></div>
-    <button
-      class="bg-indigo-600 font-semibold text-white py-2 px-10 rounded shadow-lg shadow-indigo-500/50"
+    <v-btn
+      variant="text"
+      height="100px"
       @click="getDateBoard(-1)"
     >
-      先月
-    </button>
+      <svg-icon
+        style="width: 50px; height: 50px; color: rgb(149, 149, 149);"
+        type="mdi"
+        :path="path.mdiChevronLeft"
+      ></svg-icon>
+    </v-btn>
     <div class="flex-grow"></div>
     <div
       class="flex-grow text-5xl font-extrabold text-sky-500"
     >
-      {{ month+1 }} 月
+      <v-menu
+        v-model="datePicker"
+        :close-on-content-click="false"
+      >
+        <template v-slot:activator="{props}">
+          <v-btn
+            v-bind="props"
+            variant="text"
+            style="font-size: larger; color: #4CAF50"
+            height="100px"
+          >
+            {{ month+1 }}月
+          </v-btn>
+        </template>
+        <VueDatePicker
+          locale="jp"
+          inline
+          v-model="dateSearch"
+          :month-change-on-scroll="false"
+          model-type="yyyy-MM"
+          :format="dateSearch"
+          now-button-label="今月"
+          show-now-button
+          month-picker
+          auto-apply
+          placeholder="日付を選択する"
+          :enable-time-picker="false"
+          :esc-close="true"
+        ></VueDatePicker>
+      </v-menu>
     </div>
     <div class="flex-grow"></div>
-    <button
-      class="bg-indigo-600 font-semibold text-white py-2 px-10 rounded shadow-lg shadow-indigo-500/50"
+    <v-btn
+      variant="text"
+      height="100px"
       @click="getDateBoard(1)"
     >
-      来月
-    </button>
+      <svg-icon
+        style="width: 50px; height: 50px; color: rgb(149, 149, 149);"
+        type="mdi"
+        :path="path.mdiChevronRight"
+      ></svg-icon>
+    </v-btn>
     <div class="flex-grow"></div>
   </div>
   <div class="my-3">
@@ -216,7 +250,7 @@ import { mdiPlusCircle } from '@mdi/js'
                     color="green"
                     variant="text"
                     @click="$emit('add', day.day)"
-                  ><svg-icon type="mdi" :path="path"></svg-icon>
+                  ><svg-icon type="mdi" :path="path.mdiPlusCircle"></svg-icon>
                   </v-btn>
                 </div>
                 <div class="flex-grow"></div>
