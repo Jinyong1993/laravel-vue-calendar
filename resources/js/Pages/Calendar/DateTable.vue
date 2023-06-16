@@ -11,18 +11,27 @@ import { mdiChevronRight } from '@mdi/js';
         dates: ["日", "月", "火", "水", "木", "金", "土"],
         month: null,
         year: null,
+
         path: {
           mdiPlusCircle,
           mdiChevronLeft,
           mdiChevronRight,
         },
+
         eventQuery: [],
         date_board: [],
+
         active: {
           progressDialog: false,
         },
+
         dateSearch: null,
         datePicker: false,
+
+        animation: {
+          eventPlusButton: false,
+          eventEditButton: false,
+        },
       }
     },
 
@@ -78,6 +87,8 @@ import { mdiChevronRight } from '@mdi/js';
       },
 
       getDateBoard(delta, not_refresh){
+        this.animation.eventPlusButton = false
+        this.animation.eventEditButton = false
         this.active.progressDialog = true
         if(!not_refresh) {
           this.dateBoard(delta)
@@ -92,6 +103,8 @@ import { mdiChevronRight } from '@mdi/js';
             'Content-Type': 'application/json'
           }
         }).then((response) => {
+          this.animation.eventPlusButton = true
+          this.animation.eventEditButton = true
           this.eventQuery = response.data
         }).catch((error) => {
           console.log(error)
@@ -246,7 +259,9 @@ import { mdiChevronRight } from '@mdi/js';
                   v-if="!readonly"
                 >
                   <v-btn
-                    class="pl-0"
+                    v-if="animation.eventPlusButton"
+                    v-model="animation.eventPlusButton"
+                    class="pl-0 event-plus-button"
                     color="green"
                     variant="text"
                     @click="$emit('add', day.day)"
@@ -272,24 +287,44 @@ import { mdiChevronRight } from '@mdi/js';
                 <template
                   v-if="readonly"
                 >
-                  <button
-                    class="bg-indigo-600 font-semibold text-white py-1 px-2 my-1 rounded"
+                  <v-btn
+                    v-if="animation.eventEditButton"
+                    v-model="animation.eventEditButton"
+                    class="
+                    text-white py-1 px-2 my-1
+                    rounded"
                     :style="{backgroundColor: event.tag_color}"
+                    :class="{
+                      'event-edit-button': animation.eventEditButton,
+                    }"
+                    size="small"
                   >
                     {{ event.title }}
-                  </button>
+                  </v-btn>
                 </template>
                 <template
                   v-else
                 >
-                  <button
-                    :id="event.tag_id"
-                    class="bg-indigo-600 font-semibold text-white py-1 px-2 my-1 rounded"
-                    :style="{backgroundColor: event.tag_color}"
-                    @click="$emit('edit', event)"
-                  >
-                    {{ event.title }}
-                  </button>
+                    <v-btn
+                      v-if="animation.eventEditButton"
+                      v-model="animation.eventEditButton"
+                      :id="event.tag_id"
+                      class="
+                      text-white py-1 px-2 my-1
+                      rounded"
+                      :style="{backgroundColor: event.tag_color}"
+                      :class="{
+                        'event-edit-button': animation.eventEditButton,
+                      }"
+                      @click="$emit('edit', event)"
+                      size="small"
+                    >
+                      <div
+                        class="event-edit-button-default-status"
+                      >
+                        {{ event.title }}
+                      </div>
+                    </v-btn>
                 </template>
               </div>
             </template>
@@ -314,3 +349,63 @@ import { mdiChevronRight } from '@mdi/js';
   </v-row>
 </template>
 
+<style scoped>
+.event-plus-button {
+  animation-name: fadeUpPlusButtonAnime;/*アニメーションの定義名*/
+  animation-duration:0.5s;/*アニメーション変化時間 ※デフォルト*/
+  animation-fill-mode:forwards;/*アニメーションの開始と終了時の状態を指定*/
+  opacity:0;
+}
+
+/*アニメーションの開始から終了までを指定する*/
+@keyframes fadeUpPlusButtonAnime{
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.event-edit-button {
+  animation-name: fadeUpEditButtonAnime;
+  animation-duration:1.5s;
+  animation-fill-mode:both;
+  opacity:0;
+}
+@keyframes fadeUpEditButtonAnime{
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.event-edit-button-default-status:hover {
+  animation-name: eventEditButtonDefaultStatus;
+  animation-fill-mode: both;
+  animation-duration:1s;
+  animation-iteration-count:infinite;
+  opacity: 1;
+}
+@keyframes eventEditButtonDefaultStatus {
+  0% {
+    width: 50px;
+  }
+
+  50% {
+    width: 60px;
+  }
+
+  100% {
+    width: 50px;
+  }
+}
+</style>
