@@ -21,7 +21,7 @@ import { mdiPlusCircle } from '@mdi/js'
 
     props: {
       readonly: Boolean,
-      event_id_url: String,
+      event_id: String,
     },
     emits: [
       'add',
@@ -46,16 +46,23 @@ import { mdiPlusCircle } from '@mdi/js'
 
     watch: {
       dateSearch(val, oldVal) {
-        let date = new Date(val)
-        this.year = date.getFullYear()
-        this.month = date.getMonth()
-        this.dateBoard()
-        this.getDateBoard()
+        if(!val) {
+          let date = new Date()
+          this.year = date.getFullYear()
+          this.month = date.getMonth()
+          this.getDateBoard(0)
+        } else {
+          let date = new Date(val)
+          this.year = date.getFullYear()
+          this.month = date.getMonth()
+          this.dateBoard()
+          this.getDateBoard()
+        }
       },
     },
 
     methods: {
-      getDateBoard(delta, not_refresh, event_id_url){
+      getDateBoard(delta, not_refresh){
         this.active.progressDialog = true
         if(!not_refresh) {
           this.dateBoard(delta)
@@ -64,7 +71,6 @@ import { mdiPlusCircle } from '@mdi/js'
           params: {
               year: this.year,
               month: this.month+1,
-              event_id: event_id_url,
           }
         }, {
           headers: {
