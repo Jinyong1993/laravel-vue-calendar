@@ -69,6 +69,10 @@ import { mdiCalendar } from '@mdi/js';
       SvgIcon,
     },
 
+    emits: [
+      'eventDateClick'
+    ],
+
     methods: {
       search(){
         axios.get(route('calendar.searchEvent'), {
@@ -83,6 +87,11 @@ import { mdiCalendar } from '@mdi/js';
         }).catch((error) => {
           console.log(error)
         })
+      },
+
+      eventData(event) {
+        this.$emit('eventDateClick', event.content.date_from)
+        this.searchDialog = false
       },
     },
   }
@@ -136,13 +145,12 @@ import { mdiCalendar } from '@mdi/js';
           sortable
         >
           <template v-slot:actions="item">
-            <inertia-link
-              :href="route('calendar.list', {event_id: item.content.event_id})"
+            <v-btn
+              variant="text"
+              @click="eventData(item)"
             >
-              <v-btn variant="text">
-                <svg-icon type="mdi" :path="path.mdiCalendar"></svg-icon>
-              </v-btn>
-            </inertia-link>
+              <svg-icon type="mdi" :path="path.mdiCalendar"></svg-icon>
+            </v-btn>
           </template>
         </CustomTable>
         <div

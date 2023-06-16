@@ -64,6 +64,7 @@ export default {
       },
 
       success: false,
+      eventDateFrom: null,
     }
   },
 
@@ -231,6 +232,10 @@ export default {
         console.log(error)
       })
     },
+
+    eventDate(date) {
+      this.eventDateFrom = date
+    },
   },
 
   created() {
@@ -248,6 +253,7 @@ export default {
     <!-- 検索ダイアログ -->
     <SearchDialog
       ref="dialogSearch"
+      @eventDateClick="eventDate"
     ></SearchDialog>
 
     <div class="mt-8">
@@ -278,6 +284,7 @@ export default {
       @add="add"
       @edit="edit"
       :event_id="event_id"
+      :eventDateFrom="eventDateFrom"
     ></DateTable>
 
     <!-- ボタン -->

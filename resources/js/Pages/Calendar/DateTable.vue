@@ -22,7 +22,9 @@ import { mdiPlusCircle } from '@mdi/js'
     props: {
       readonly: Boolean,
       event_id: String,
+      eventDateFrom: String,
     },
+
     emits: [
       'add',
       'edit',
@@ -33,10 +35,7 @@ import { mdiPlusCircle } from '@mdi/js'
     },
 
     created() {
-      let date = new Date()
-      this.year = date.getFullYear()
-      this.month = date.getMonth()
-      this.getDateBoard(0)
+      this.resetDateBoard()
     },
 
     components: {
@@ -47,21 +46,29 @@ import { mdiPlusCircle } from '@mdi/js'
     watch: {
       dateSearch(val, oldVal) {
         if(!val) {
-          let date = new Date()
-          this.year = date.getFullYear()
-          this.month = date.getMonth()
-          this.getDateBoard(0)
+          this.resetDateBoard()
         } else {
           let date = new Date(val)
           this.year = date.getFullYear()
           this.month = date.getMonth()
           this.dateBoard()
-          this.getDateBoard()
+          this.getDateBoard(0)
         }
+      },
+
+      eventDateFrom(val) {
+        this.dateSearch = val
       },
     },
 
     methods: {
+      resetDateBoard() {
+        let date = new Date()
+        this.year = date.getFullYear()
+        this.month = date.getMonth()
+        this.getDateBoard(0)
+      },
+
       getDateBoard(delta, not_refresh){
         this.active.progressDialog = true
         if(!not_refresh) {
@@ -139,11 +146,10 @@ import { mdiPlusCircle } from '@mdi/js'
       :month-change-on-scroll="false"
       model-type="yyyy-MM"
       :format="dateSearch"
+      month-picker
       auto-apply
       placeholder="日付を選択する"
-      show-now-button
       :enable-time-picker="false"
-      now-button-label="本日"
       :esc-close="true"
     ></VueDatePicker>
   </div>

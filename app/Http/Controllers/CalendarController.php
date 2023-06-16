@@ -11,10 +11,8 @@ class CalendarController extends Controller
 {
     public function list(Request $request)
     {
-        $event_id = $request->event_id;
         return Inertia::render('Calendar/CalendarList', [
             'is_list' => true,
-            'event_id_url' => $event_id,
         ]);
     }
 
@@ -29,7 +27,6 @@ class CalendarController extends Controller
     {
         $year = $request->year ?? date('Y');
         $month = $request->month ?? date('n');
-        $event_id = $request->event_id;
         $query = array();
 
         // フォーメット　01,02...12
@@ -41,11 +38,11 @@ class CalendarController extends Controller
 
 
         $selects = Event::where('event.user_id', auth()->user()->id)
-                        ->where('event.date_from', '<=', $last_date)
-                        ->where('event.date_to', '>=', $first_date)
-                        ->leftjoin('tag', 'tag.tag_id', '=', 'event.tag_id')
-                        ->select('event.*', 'tag.tag_id', 'tag.tag_color', 'tag.tag_name')
-                        ->get();
+        ->where('event.date_from', '<=', $last_date)
+        ->where('event.date_to', '>=', $first_date)
+        ->leftjoin('tag', 'tag.tag_id', '=', 'event.tag_id')
+        ->select('event.*', 'tag.tag_id', 'tag.tag_color', 'tag.tag_name')
+        ->get();
 
         foreach($selects as $select){
             if($select->date_from <= $first_date){
