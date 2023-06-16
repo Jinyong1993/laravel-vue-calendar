@@ -1,5 +1,6 @@
 <script>
 import SvgIcon from '@jamescoyle/vue-icon'
+import VueDatePicker from '@vuepic/vue-datepicker'
 import { mdiPlusCircle } from '@mdi/js'
 
   export default {
@@ -14,6 +15,7 @@ import { mdiPlusCircle } from '@mdi/js'
         active: {
           progressDialog: false,
         },
+        dateSearch: null
       }
     },
 
@@ -38,7 +40,18 @@ import { mdiPlusCircle } from '@mdi/js'
     },
 
     components: {
+      VueDatePicker,
       SvgIcon,
+    },
+
+    watch: {
+      dateSearch(val, oldVal) {
+        let date = new Date(val)
+        this.year = date.getFullYear()
+        this.month = date.getMonth()
+        this.dateBoard()
+        this.getDateBoard()
+      },
     },
 
     methods: {
@@ -114,6 +127,20 @@ import { mdiPlusCircle } from '@mdi/js'
 </script>
 
 <template>
+  <div>
+    <VueDatePicker
+      v-model="dateSearch"
+      :month-change-on-scroll="false"
+      model-type="yyyy-MM"
+      :format="dateSearch"
+      auto-apply
+      placeholder="日付を選択する"
+      show-now-button
+      :enable-time-picker="false"
+      now-button-label="本日"
+      :esc-close="true"
+    ></VueDatePicker>
+  </div>
   <div
     class="flex text-center my-7"
   >
