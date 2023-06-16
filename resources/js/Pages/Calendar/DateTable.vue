@@ -321,6 +321,7 @@ import { mdiChevronRight } from '@mdi/js';
                     >
                       <div
                         class="event-edit-button-default-status"
+                        style="height: 15px;"
                       >
                         {{ event.title }}
                       </div>
@@ -397,7 +398,7 @@ import { mdiChevronRight } from '@mdi/js';
 }
 @keyframes eventEditButtonDefaultStatus {
   0% {
-    width: 50px;
+    width: 30px;
   }
 
   50% {
@@ -405,7 +406,7 @@ import { mdiChevronRight } from '@mdi/js';
   }
 
   100% {
-    width: 50px;
+    width: 30px;
   }
 }
 </style>
