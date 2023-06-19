@@ -312,36 +312,42 @@ import { mdiChevronRight } from '@mdi/js';
                     }"
                     size="small"
                   >
-                    {{ event.title }}
+                    <div
+                      class="event-edit-button-default-status"
+                      :class="{
+                        'event-found': event.found,
+                      }"
+                      style="height: 15px;"
+                    >
+                      {{ event.title }}
+                    </div>
                   </v-btn>
                 </template>
-                <template
-                  v-else
-                >
-                    <v-btn
-                      v-if="animation.eventEditButton"
-                      v-model="animation.eventEditButton"
-                      :id="event.tag_id"
-                      class="
-                      text-white py-1 px-2 my-1
-                      rounded"
-                      :style="{backgroundColor: event.tag_color}"
+                <template v-else>
+                  <v-btn
+                    v-if="animation.eventEditButton"
+                    v-model="animation.eventEditButton"
+                    :id="event.tag_id"
+                    class="
+                    text-white py-1 px-2 my-1
+                    rounded"
+                    :style="{backgroundColor: event.tag_color}"
+                    :class="{
+                      'event-edit-button': animation.eventEditButton,
+                    }"
+                    @click="$emit('edit', event)"
+                    size="small"
+                  >
+                    <div
+                      class="event-edit-button-default-status"
                       :class="{
-                        'event-edit-button': animation.eventEditButton,
+                        'event-found': event.found,
                       }"
-                      @click="$emit('edit', event)"
-                      size="small"
+                      style="height: 15px;"
                     >
-                      <div
-                        class="event-edit-button-default-status"
-                        :class="{
-                          'event-found': event.found,
-                        }"
-                        style="height: 15px;"
-                      >
-                        {{ event.title }}
-                      </div>
-                    </v-btn>
+                      {{ event.title }}
+                    </div>
+                  </v-btn>
                 </template>
               </div>
             </template>
@@ -425,7 +431,7 @@ import { mdiChevronRight } from '@mdi/js';
   }
 
   50% {
-    transform: scale(1.3);
+    transform: scale(1.2);
   }
 
   100% {
