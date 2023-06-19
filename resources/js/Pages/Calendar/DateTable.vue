@@ -8,7 +8,16 @@ import { mdiChevronRight } from '@mdi/js';
   export default {
     data () {
       return {
-        dates: ["日", "月", "火", "水", "木", "金", "土"],
+        dates: [
+          {'SUN':'日'},
+          {'MON':'月'},
+          {'TUE':'火'},
+          {'WED':'水'},
+          {'THU':'木'},
+          {'FRI':'金'},
+          {'SAT':'土'},
+        ],
+
         month: null,
         year: null,
 
@@ -249,11 +258,19 @@ import { mdiChevronRight } from '@mdi/js';
             :key="date_idx"
           >
             <th
+              v-for="(d, d_idx) in date"
+              :key="d_idx"
               class="border border-slate-600 h-8"
               :style="{
                 color: date_idx == 0 ? 'red' : '' || date_idx == 6 ? 'blue' : ''
               }"
-            >{{ date }}</th>
+            >
+              <span class="d-flex justify-space-between">
+                <span style="width: 38px;"></span>
+                <span>{{ d }}</span>
+                <span style="width: 38px;" class="text-caption pt-1">{{ d_idx }}</span>
+              </span>
+            </th>
           </template>
         </tr>
       </thead>
