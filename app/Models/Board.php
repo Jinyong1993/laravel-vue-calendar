@@ -13,6 +13,17 @@ class Board extends Model
 
     use SoftDeletes;
 
+    protected $fillable = [
+        'board_id',
+        'title',
+        'note',
+        'user_id',
+        'hit',
+        'updated_at',
+        'created_at',
+        'deleted_at',
+    ];
+
     // 1:n セレクト
     public function comments()
     {
