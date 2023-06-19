@@ -244,9 +244,15 @@ import { mdiChevronRight } from '@mdi/js';
     >
       <thead>
         <tr>
-          <template v-for="date in dates">
+          <template
+            v-for="(date, date_idx) in dates"
+            :key="date_idx"
+          >
             <th
               class="border border-slate-600 h-8"
+              :style="{
+                color: date_idx == 0 ? 'red' : '' || date_idx == 6 ? 'blue' : ''
+              }"
             >{{ date }}</th>
           </template>
         </tr>
@@ -284,6 +290,9 @@ import { mdiChevronRight } from '@mdi/js';
                 <div class="flex-grow"></div>
                 <div
                   class="mt-1"
+                  :style="{
+                    color: d_idx == 0 ? 'red' : '' || d_idx == 6 ? 'blue' : ''
+                  }"
                 >
                   {{ day.day }}
                 </div>
