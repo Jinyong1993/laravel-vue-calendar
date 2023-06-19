@@ -90,7 +90,7 @@ import { mdiCalendar } from '@mdi/js';
       },
 
       eventData(event) {
-        this.$emit('eventDateClick', event.content.date_from)
+        this.$emit('eventDateClick', event.content)
         this.searchDialog = false
       },
     },

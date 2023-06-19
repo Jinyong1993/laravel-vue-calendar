@@ -38,7 +38,7 @@ import { mdiChevronRight } from '@mdi/js';
     props: {
       readonly: Boolean,
       event_id: String,
-      eventDateFrom: String,
+      eventDateFrom: Object,
     },
 
     emits: [
@@ -74,7 +74,7 @@ import { mdiChevronRight } from '@mdi/js';
       },
 
       eventDateFrom(val) {
-        this.dateSearch = val
+        this.dateSearch = val.date_from
       },
     },
 
@@ -106,9 +106,22 @@ import { mdiChevronRight } from '@mdi/js';
           this.animation.eventPlusButton = true
           this.animation.eventEditButton = true
           this.eventQuery = response.data
+
+          let query = this.eventQuery
+          Object.values(query).forEach(events => {
+            events.forEach(event => {
+              if(this.eventDateFrom) {
+                if(this.eventDateFrom.event_id == event.event_id) {
+                  event.found = true
+                }
+              }
+            })
+          })
         }).catch((error) => {
           console.log(error)
-        }).finally(() => this.active.progressDialog = false)
+        }).finally(() => {
+          this.active.progressDialog = false
+        })
       },
 
       dateBoard(delta){
@@ -321,6 +334,9 @@ import { mdiChevronRight } from '@mdi/js';
                     >
                       <div
                         class="event-edit-button-default-status"
+                        :class="{
+                          'event-found': event.found,
+                        }"
                         style="height: 15px;"
                       >
                         {{ event.title }}
@@ -389,6 +405,13 @@ import { mdiChevronRight } from '@mdi/js';
   }
 }
 
+.event-found {
+  animation-name: eventEditButtonDefaultStatus;
+  animation-fill-mode: both;
+  animation-duration:1s;
+  animation-iteration-count:5;
+  opacity: 1;
+}
 .event-edit-button-default-status:hover {
   animation-name: eventEditButtonDefaultStatus;
   animation-fill-mode: both;
@@ -398,15 +421,15 @@ import { mdiChevronRight } from '@mdi/js';
 }
 @keyframes eventEditButtonDefaultStatus {
   0% {
-    width: 30px;
+    transform: scale(1);
   }
 
   50% {
-    width: 60px;
+    transform: scale(1.3);
   }
 
   100% {
-    width: 30px;
+    transform: scale(1);
   }
 }
 </style>
