@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Event;
 use App\Models\Tag;
+use Illuminate\Support\Facades\Validator;
 
 class CalendarController extends Controller
 {
@@ -72,6 +73,28 @@ class CalendarController extends Controller
 
     public function eventUpdate(Request $request)
     {
+        $customMessages = [
+            'required' => ':attributeは必須です。'
+        ];
+
+        $attrs = [
+            'title' => 'タイトル',
+            'text' => 'テキスト',
+            'date_from' => '開始日',
+            'date_to' => '終了日',
+        ];
+
+        $validator = Validator::make($request->all(), [
+            'title' => ['required'],
+            'text' => ['required'],
+            'date_from' => ['required'],
+            'date_to' => ['required'],
+        ], $customMessages, $attrs);
+
+        if($validator->fails()) {
+            return response()->json($validator->messages(), 400);
+        }
+
         if(!$request->event_id){
             $event = new Event();
 
@@ -104,6 +127,26 @@ class CalendarController extends Controller
 
     public function colorUpdate(Request $request)
     {
+        $customMessages = [
+            'required' => ':attributeは必須です。'
+        ];
+
+        $attrs = [
+            'tag_name' => 'カラー名',
+            'tag_note' => 'カラー説明',
+            'tag_color' => 'カラー',
+        ];
+
+        $validator = Validator::make($request->all(), [
+            'tag_name' => ['required'],
+            'tag_note' => ['required'],
+            'tag_color' => ['required'],
+        ], $customMessages, $attrs);
+
+        if($validator->fails()) {
+            return response()->json($validator->messages(), 400);
+        }
+
         if(!$request->tag_id){
             $tag = new Tag();
 

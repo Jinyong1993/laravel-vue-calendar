@@ -64,7 +64,9 @@ export default {
       },
 
       success: false,
+      errors: false,
       eventDateFrom: null,
+      errorMessages: null,
     }
   },
 
@@ -88,8 +90,11 @@ export default {
         this.active.editDialog = false
         this.$refs.date_table.getDateBoard(0)
         this.success = true
-      }).catch(function (error) {
-
+      }).catch((error) => {
+        this.errorMessages = error.response.data
+        this.active.editDialog = false
+        this.active.addDialog = false
+        this.errors = true
       });
     },
 
@@ -228,8 +233,10 @@ export default {
         this.$refs.date_table.getDateBoard(0, true)
         this.getMyColor()
         this.success = true
-      }).catch(function (error) {
-        console.log(error)
+      }).catch((error) => {
+        this.errorMessages = error.response.data
+        this.active.colorSettingDialog = false
+        this.errors = true
       })
     },
 
@@ -272,11 +279,31 @@ export default {
     <!-- アラート -->
     <v-alert
       v-model="success"
+      icon="$success"
       type="success"
       title="保存しました。"
       closable
       class="mt-0"
     ></v-alert>
+
+    <v-alert
+      v-model="errors"
+      type="error"
+      closable
+      class="mt-0"
+    >
+      <div
+        v-for="(errors, errors_idx) in errorMessages"
+        :key="errors_idx"
+      >
+        <span
+          v-for="(error, error_idx) in errors"
+          :key="error_idx"
+        >
+          {{ error }}
+        </span>
+      </div>
+    </v-alert>
 
     <!-- 日付テーブル -->
     <DateTable
