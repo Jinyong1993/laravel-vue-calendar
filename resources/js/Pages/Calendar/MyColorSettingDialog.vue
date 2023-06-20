@@ -1,18 +1,23 @@
 <script>
+import Validation from '@/Common/Validation.vue'
+
   export default {
     data () {
       return {
-
+        isError: false,
       }
     },
 
     props: [
       'show',
+      'error',
       'data',
+      'errorMessages',
       'colors',
     ],
     emits: [
       'update:show',
+      'update:error',
       'update:data',
       'colorDelete',
       'colorConfirm',
@@ -27,18 +32,28 @@
           this.$emit('update:show', value)
         },
       },
+
       dialogData: {
         get() {
           return this.data
         },
         set(value) {
           this.$emit('update:data', value);
-        }
-      }
+        },
+      },
+
+      errorShow: {
+        get() {
+          return this.error
+        },
+        set(value) {
+          this.$emit('update:error', value)
+        },
+      },
     },
 
     components: {
-
+      Validation,
     },
 
     methods: {
@@ -68,6 +83,14 @@
             </v-card-title>
           </div>
         </div>
+
+        <div v-if="isError">
+          <Validation
+            v-model:show="errorShow"
+            :errorMessages="errorMessages"
+          ></Validation>
+        </div>
+
         <v-text-field
           v-model="dialogData.tag_name"
           label="カラー名"

@@ -1,6 +1,7 @@
 <script>
 import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
+import Validation from '@/Common/Validation.vue'
 
   export default {
     data () {
@@ -14,16 +15,20 @@ import '@vuepic/vue-datepicker/dist/main.css'
           {'date':'金曜日', 'repeat_date': 5},
           {'date':'土曜日', 'repeat_date': 6},
         ],
+        isError: false,
       }
     },
 
     props: [
       'show',
+      'error',
       'data',
+      'errorMessages',
       'colors',
     ],
     emits: [
       'update:show',
+      'update:error',
       'update:data',
       'confirm',
       'delete',
@@ -31,6 +36,7 @@ import '@vuepic/vue-datepicker/dist/main.css'
 
     components: {
       VueDatePicker,
+      Validation,
     },
 
     methods: {
@@ -46,6 +52,7 @@ import '@vuepic/vue-datepicker/dist/main.css'
             this.$emit('update:show', value)
           }
       },
+
       dialogData: {
         get() {
           return this.data
@@ -53,7 +60,16 @@ import '@vuepic/vue-datepicker/dist/main.css'
         set(value) {
           this.$emit('update:data', value);
         }
-      }
+      },
+
+      errorShow: {
+        get() {
+          return this.error
+        },
+        set(value) {
+          this.$emit('update:error', value)
+        }
+      },
     },
   }
 </script>
@@ -100,6 +116,14 @@ import '@vuepic/vue-datepicker/dist/main.css'
           </v-card-title>
         </div>
       </div>
+
+      <div v-if="isError">
+        <Validation
+          v-model:show="errorShow"
+          :errorMessages="errorMessages"
+        ></Validation>
+      </div>
+
       <v-text-field
         v-model="dialogData.title"
         label="タイトル"
@@ -202,3 +226,6 @@ import '@vuepic/vue-datepicker/dist/main.css'
   </v-dialog>
 </template>
 
+<script>
+
+</script>

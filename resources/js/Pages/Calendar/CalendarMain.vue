@@ -68,6 +68,7 @@ export default {
 
       success: false,
       errors: false,
+
       eventDateFrom: null,
       errorMessages: null,
     }
@@ -95,9 +96,8 @@ export default {
         this.$refs.date_table.getDateBoard(0)
         this.success = true
       }).catch((error) => {
+        this.$refs.event.isError = true
         this.errorMessages = error.response.data
-        this.active.editDialog = false
-        this.active.addDialog = false
         this.errors = true
       });
     },
@@ -120,8 +120,8 @@ export default {
         this.$refs.date_table.getDateBoard(0)
         this.success = true
       }).catch(function (error) {
-
-      });
+        console.log(error)
+      })
     },
 
     add(day) {
@@ -238,8 +238,8 @@ export default {
         this.getMyColor()
         this.success = true
       }).catch((error) => {
+        this.$refs.color.isError = true
         this.errorMessages = error.response.data
-        this.active.colorSettingDialog = false
         this.errors = true
       })
     },
@@ -289,11 +289,6 @@ export default {
       closable
       class="mt-0"
     ></v-alert>
-
-    <Validation
-      v-model:show="errors"
-      :errorMessages="errorMessages"
-    ></Validation>
 
     <!-- 日付テーブル -->
     <DateTable
@@ -360,11 +355,14 @@ export default {
 
     <!-- イベント設定ダイアログ -->
     <EventSettingDialog
+      ref="event"
       v-model:show="active.editDialog"
+      v-model:error="errors"
       v-model:data="eventDialogData"
       :colors="myColorQuery"
       @delete="eventDelete"
       @confirm="eventConfirm"
+      :errorMessages="errorMessages"
     ></EventSettingDialog>
 
     <!-- プログレスダイアログ -->
@@ -383,11 +381,14 @@ export default {
 
     <!-- マイカラー設定ダイアログ -->
     <MyColorSettingDialog
+      ref="color"
       v-model:show="active.colorSettingDialog"
+      v-model:error="errors"
       v-model:data="myColorDialogData"
       :colors="myColorQuery"
       @colorDelete="myColorDelete"
       @colorConfirm="myColorConfirm"
+      :errorMessages="errorMessages"
     ></MyColorSettingDialog>
   </CalendarLayout>
 </template>
