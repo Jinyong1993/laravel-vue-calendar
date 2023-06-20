@@ -95,15 +95,16 @@ class CalendarController extends Controller
             return response()->json($validator->messages(), 400);
         }
 
+        // 保存処理
         if(!$request->event_id){
             $event = new Event();
-
             $event->title = $request->title;
             $event->text = $request->text;
             $event->date_from = $request->date_from;
             $event->date_to = $request->date_to;
             $event->user_id = auth()->user()->id;
             $event->tag_id = $request->tag_id ?? 0;
+            $event->repeat_date = $request->repeat_date['repeat_date'];
             $event->updated_at = date('Y-m-d H:i:s');
             $event->created_at = date('Y-m-d H:i:s');
 
@@ -117,6 +118,7 @@ class CalendarController extends Controller
                 'date_from' => $request->date_from,
                 'date_to' => $request->date_to,
                 'tag_id' => $request->tag_id,
+                'repeat_date' => $request->repeat_date['repeat_date'],
                 'user_id' => auth()->user()->id,
                 'updated_at' => date('Y-m-d H:i:s'),
             ]);
@@ -147,20 +149,18 @@ class CalendarController extends Controller
             return response()->json($validator->messages(), 400);
         }
 
+        // 保存処理
         if(!$request->tag_id){
             $tag = new Tag();
-
             $tag->tag_name = $request->tag_name;
             $tag->tag_note = $request->tag_note;
             $tag->tag_color = $request->tag_color;
             $tag->user_id = auth()->user()->id;
             $tag->updated_at = date('Y-m-d H:i:s');
             $tag->created_at = date('Y-m-d H:i:s');
-
             $tag->save();
         } else {
             $tag = Tag::find($request->tag_id);
-
             $tag->update([
                 'tag_name' => $request->tag_name,
                 'tag_note' => $request->tag_note,

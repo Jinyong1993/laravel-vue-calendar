@@ -323,33 +323,7 @@ import { mdiChevronRight } from '@mdi/js';
                 :key="event.event_id"
                 v-show="!event.hidden"
               >
-                <template
-                  v-if="readonly"
-                >
-                  <v-btn
-                    v-if="animation.eventEditButton"
-                    v-model="animation.eventEditButton"
-                    class="
-                    text-white py-1 px-2 my-1
-                    rounded"
-                    :style="{backgroundColor: event.tag_color}"
-                    :class="{
-                      'event-edit-button': animation.eventEditButton,
-                    }"
-                    size="small"
-                  >
-                    <div
-                      class="event-edit-button-default-status"
-                      :class="{
-                        'event-found': event.found,
-                      }"
-                      style="height: 15px;"
-                    >
-                      {{ event.title }}
-                    </div>
-                  </v-btn>
-                </template>
-                <template v-else>
+                <template v-if="event.repeat_date == d_idx || event.repeat_date == null">
                   <v-btn
                     v-if="animation.eventEditButton"
                     v-model="animation.eventEditButton"

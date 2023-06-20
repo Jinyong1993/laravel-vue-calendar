@@ -5,7 +5,15 @@ import '@vuepic/vue-datepicker/dist/main.css'
   export default {
     data () {
       return {
-
+        dates: [
+          {'date':'日曜日', 'repeat_date': 0},
+          {'date':'月曜日', 'repeat_date': 1},
+          {'date':'火曜日', 'repeat_date': 2},
+          {'date':'水曜日', 'repeat_date': 3},
+          {'date':'木曜日', 'repeat_date': 4},
+          {'date':'金曜日', 'repeat_date': 5},
+          {'date':'土曜日', 'repeat_date': 6},
+        ],
       }
     },
 
@@ -111,8 +119,17 @@ import '@vuepic/vue-datepicker/dist/main.css'
           label="マイカラー設定"
           item-title="tag_name"
           item-value="tag_id"
-        >
-      </v-select>
+        ></v-select>
+      </div>
+      <div>
+        <v-select
+          v-model="dialogData.repeat_date"
+          :items="dates"
+          label="期間内繰り返し"
+          item-title="date"
+          item-value="repeat_date"
+          return-object
+        ></v-select>
       </div>
       <div
         class="flex justify-between"

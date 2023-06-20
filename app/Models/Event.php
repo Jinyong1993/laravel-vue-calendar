@@ -7,7 +7,7 @@ class Event extends Model
 {
     protected $table = 'event';
     protected $primaryKey = 'event_id';
-    // protected $connection = 'mysql';
+    protected $connection = 'mysql';
 
     protected $fillable = [
         'event_id',
@@ -17,6 +17,7 @@ class Event extends Model
         'title',
         'text',
         'tag_id',
+        'repeat_date',
         'updated_at',
         'created_at',
     ];
