@@ -323,7 +323,9 @@ import { mdiChevronRight } from '@mdi/js';
                 :key="event.event_id"
                 v-show="!event.hidden"
               >
-                <template v-if="event.repeat_date == d_idx || event.repeat_date == null">
+                <template
+                  v-if="event.repeat_date == null || event.repeat_date.includes(d_idx)"
+                >
                   <v-btn
                     v-if="animation.eventEditButton"
                     v-model="animation.eventEditButton"

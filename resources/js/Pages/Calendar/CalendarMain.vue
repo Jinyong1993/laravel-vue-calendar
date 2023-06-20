@@ -81,7 +81,7 @@ export default {
         date_from: this.eventDialogData.date_from,
         date_to: this.eventDialogData.date_to,
         tag_id: this.eventDialogData.tag_id,
-        repeat_date: this.eventDialogData.repeat_date,
+        repeat_date: this.eventDialogData.repeat_date ? this.eventDialogData.repeat_date : null,
       },
       {
         headers: {

@@ -129,6 +129,7 @@ import '@vuepic/vue-datepicker/dist/main.css'
           item-title="date"
           item-value="repeat_date"
           return-object
+          multiple
         ></v-select>
       </div>
       <div

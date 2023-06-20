@@ -95,6 +95,15 @@ class CalendarController extends Controller
             return response()->json($validator->messages(), 400);
         }
 
+        // 複数繰り返し機能
+        if(!empty($request->repeat_date)) {
+            $repeat_date = [];
+            foreach($request->repeat_date as $key => $date) {
+                $repeat_date[$key] = $date['repeat_date'];
+            }
+            $repeat_date = json_encode($repeat_date);
+        }
+
         // 保存処理
         if(!$request->event_id){
             $event = new Event();
@@ -104,10 +113,9 @@ class CalendarController extends Controller
             $event->date_to = $request->date_to;
             $event->user_id = auth()->user()->id;
             $event->tag_id = $request->tag_id ?? 0;
-            $event->repeat_date = $request->repeat_date['repeat_date'] ?? null;
+            $event->repeat_date = $repeat_date ?? null;
             $event->updated_at = date('Y-m-d H:i:s');
             $event->created_at = date('Y-m-d H:i:s');
-
             $event->save();
         } else {
             $event = Event::find($request->event_id);
@@ -118,7 +126,7 @@ class CalendarController extends Controller
                 'date_from' => $request->date_from,
                 'date_to' => $request->date_to,
                 'tag_id' => $request->tag_id,
-                'repeat_date' => $request->repeat_date['repeat_date'] ?? null,
+                'repeat_date' => $repeat_date ?? null,
                 'user_id' => auth()->user()->id,
                 'updated_at' => date('Y-m-d H:i:s'),
             ]);
