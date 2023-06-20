@@ -154,6 +154,7 @@ import Validation from '@/Common/Validation.vue'
           item-value="repeat_date"
           return-object
           multiple
+          chips
         ></v-select>
       </div>
       <div
