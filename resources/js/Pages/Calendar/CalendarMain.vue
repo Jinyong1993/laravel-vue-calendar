@@ -269,15 +269,15 @@ export default {
 
     <div class="mt-8">
       <v-select
-      v-model="tagData.tag_id"
-      :items="this.myColorQuery"
-      label="マイカラー"
-      item-title="tag_name"
-      item-value="tag_id"
-      multiple
-      @update:modelValue="tagToggle(tagData.tag_id)"
-      >
-      </v-select>
+        v-model="tagData.tag_id"
+        :items="this.myColorQuery"
+        label="マイカラー"
+        item-title="tag_name"
+        item-value="tag_id"
+        multiple
+        chips
+        @update:modelValue="tagToggle(tagData.tag_id)"
+      ></v-select>
     </div>
 
     <!-- アラート -->
