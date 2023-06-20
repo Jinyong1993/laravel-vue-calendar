@@ -7,6 +7,7 @@ import DateTable from './DateTable.vue'
 import axios from 'axios'
 import VueDatePicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
+import Validation from '@/Common/Validation.vue'
 
 export default {
   props: {
@@ -21,6 +22,7 @@ export default {
     MyColorSettingDialog,
     EventSettingDialog,
     DateTable,
+    Validation,
   },
 
   data() {
@@ -288,24 +290,10 @@ export default {
       class="mt-0"
     ></v-alert>
 
-    <v-alert
-      v-model="errors"
-      type="error"
-      closable
-      class="mt-0"
-    >
-      <div
-        v-for="(errors, errors_idx) in errorMessages"
-        :key="errors_idx"
-      >
-        <span
-          v-for="(error, error_idx) in errors"
-          :key="error_idx"
-        >
-          {{ error }}
-        </span>
-      </div>
-    </v-alert>
+    <Validation
+      v-model:show="errors"
+      :errorMessages="errorMessages"
+    ></Validation>
 
     <!-- 日付テーブル -->
     <DateTable
