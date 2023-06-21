@@ -37,24 +37,30 @@ class CalendarController extends Controller
         $time_stamp = strtotime($first_date);
         $last_date = date('Y-m-t', $time_stamp);
 
-
         $selects = Event::where('event.user_id', auth()->user()->id)
         ->where('event.date_from', '<=', $last_date)
-        ->where('event.date_to', '>=', $first_date)
+        ->where(function ($query) use($first_date) {
+            $query->whereNull('event.date_to')
+            ->orWhere('event.date_to', '>=', $first_date);
+        })
         ->leftjoin('tag', 'tag.tag_id', '=', 'event.tag_id')
         ->select('event.*', 'tag.tag_id', 'tag.tag_color', 'tag.tag_name')
         ->get();
 
         foreach($selects as $select){
-            if($select->date_from <= $first_date){
+            if($select->date_from <= $first_date) {
                 $from = $first_date; // 1
             } else {
                 $from = $select->date_from;
             }
 
-            if($select->date_to <= $last_date){
+            if($select->date_to <= $last_date) {
                 $to = $select->date_to;
             } else {
+                $to = $last_date;
+            }
+
+            if(!$select->date_to) {
                 $to = $last_date;
             }
 
