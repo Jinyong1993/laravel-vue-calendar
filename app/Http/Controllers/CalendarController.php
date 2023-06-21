@@ -79,16 +79,16 @@ class CalendarController extends Controller
 
         $attrs = [
             'title' => 'タイトル',
-            'text' => 'テキスト',
+            // 'text' => 'テキスト',
             'date_from' => '開始日',
-            'date_to' => '終了日',
+            // 'date_to' => '終了日',
         ];
 
         $validator = Validator::make($request->all(), [
             'title' => ['required'],
-            'text' => ['required'],
+            // 'text' => ['required'],
             'date_from' => ['required'],
-            'date_to' => ['required'],
+            // 'date_to' => ['required'],
         ], $customMessages, $attrs);
 
         if($validator->fails()) {
