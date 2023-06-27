@@ -290,7 +290,7 @@ ORDER BY CATEGORY
 
 
 
--- 1　202/06/23
+-- 1　2022/06/23
 -- CAR_RENTAL_COMPANY_RENTAL_HISTORY 테이블에서 대여 시작일을 기준으로
 -- 2022년 8월부터 2022년 10월까지 총 대여 횟수가 5회 이상인 자동차들에 대해서
 -- 해당 기간 동안의 월별 자동차 ID 별 총 대여 횟수(컬럼명: RECORDS) 리스트를 출력하는 SQL문을 작성해주세요.
@@ -309,7 +309,7 @@ GROUP BY MONTH(START_DATE), CAR_ID
 ORDER BY MONTH, CAR_ID DESC
 
 -- 2
--- 2022년 1월의 도서 판매 데이터를 기준으로 저자 별,
+-- 2022년 1월의 도서 판매 데이터를 기준으로 저자 별, ss
 -- 카테고리 별 매출액(TOTAL_SALES = 판매량 * 판매가) 을 구하여,
 -- 저자 ID(AUTHOR_ID), 저자명(AUTHOR_NAME), 카테고리(CATEGORY), 매출액(SALES) 리스트를 출력하는 SQL문을 작성해주세요.
 -- 결과는 저자 ID를 오름차순으로, 저자 ID가 같다면 카테고리를 내림차순 정렬해주세요.
@@ -545,3 +545,347 @@ JOIN OFFLINE_SALE AS T2
 ON T1.PRODUCT_ID = T2.PRODUCT_ID
 GROUP BY PRODUCT_CODE
 ORDER BY SALES DESC, PRODUCT_CODE
+
+
+
+-- 2023/06/25
+-- 1
+-- 입양을 간 동물 중, 보호 기간이 가장 길었던 동물 두 마리의
+-- 아이디와 이름을 조회하는 SQL문을 작성해주세요. 이때 결과는 보호 기간이 긴 순으로 조회해야 합니다.
+SELECT T1.ANIMAL_ID, T1.NAME
+FROM ANIMAL_OUTS AS T1
+INNER JOIN ANIMAL_INS AS T2
+ON T1.ANIMAL_ID = T2.ANIMAL_ID
+ORDER BY (DATEDIFF(T1.DATETIME,T2.DATETIME)) DESC
+LIMIT 2
+
+-- PATIENT, DOCTOR 그리고 APPOINTMENT 테이블에서 2022년 4월 13일
+-- 취소되지 않은 흉부외과(CS) 진료 예약 내역을 조회하는 SQL문을 작성해주세요.
+-- 진료예약번호, 환자이름, 환자번호, 진료과코드, 의사이름, 진료예약일시 항목이 출력되도록 작성해주세요.
+-- 결과는 진료예약일시를 기준으로 오름차순 정렬해주세요.
+SELECT A.APNT_NO, P.PT_NAME, P.PT_NO, A.MCDP_CD, D.DR_NAME, A.APNT_YMD
+FROM DOCTOR AS D
+INNER JOIN APPOINTMENT AS A
+ON D.DR_ID = A.MDDR_ID
+INNER JOIN PATIENT AS P
+ON A.PT_NO = P.PT_NO
+WHERE A.MCDP_CD = 'CS'
+AND A.APNT_YMD BETWEEN '2022-04-13 00:00:00' AND '2022-04-13 23:59:59'
+AND A.APNT_CNCL_YN = 'N'
+ORDER BY A.APNT_YMD
+
+-- CAR_RENTAL_COMPANY_CAR 테이블과 CAR_RENTAL_COMPANY_RENTAL_HISTORY
+-- 테이블과 CAR_RENTAL_COMPANY_DISCOUNT_PLAN 테이블에서 자동차 종류가
+-- '트럭'인 자동차의 대여 기록에 대해서 대여 기록 별로
+-- 대여 금액(컬럼명: FEE)을 구하여 대여 기록 ID와 대여 금액 리스트를
+-- 출력하는 SQL문을 작성해주세요.
+-- 결과는 대여 금액을 기준으로 내림차순 정렬하고,
+-- 대여 금액이 같은 경우 대여 기록 ID를 기준으로 내림차순 정렬해주세요.
+SELECT
+    LIST.HISTORY_ID,
+    ROUND(LIST.DAILY_FEE * (1.0 - IFNULL(T3.DISCOUNT_RATE * 0.01, 0)) * LIST.DAYS, 0) AS FEE
+    -- 반올림((1일 빌리는 요금 * (100% - NULL이라면(NULL이 아닐때 값(할인율) * 1%, NULL일때 값 0))) * 렌탈 일수, 소수 1번째자리)
+FROM
+(
+    SELECT
+        T2.HISTORY_ID, T1.DAILY_FEE,
+        DATEDIFF(END_DATE, START_DATE) + 1 AS DAYS, -- 자동차 대여 일수
+        CASE
+            WHEN (DATEDIFF(END_DATE, START_DATE) + 1) >= 90 THEN '90일 이상'
+            WHEN (DATEDIFF(END_DATE, START_DATE) + 1) >= 30 THEN '30일 이상'
+            WHEN (DATEDIFF(END_DATE, START_DATE) + 1) >= 7 THEN '7일 이상'
+        END AS DURATION_TYPE -- T3 테이블의 DURATION_TYPE의 조건
+    FROM CAR_RENTAL_COMPANY_CAR AS T1 -- 자동차 정보
+    LEFT JOIN CAR_RENTAL_COMPANY_RENTAL_HISTORY AS T2 -- 자동차 대여 기록
+    ON T1.CAR_ID = T2.CAR_ID -- CAR_ID로 조인
+    WHERE T1.CAR_TYPE = '트럭' -- 차 종류는 트럭만
+) AS LIST -- 서브 쿼리명이 LIST인 테이블 생성
+LEFT JOIN CAR_RENTAL_COMPANY_DISCOUNT_PLAN AS T3 -- 7일 이하 대여 자동차가 NULL값이기 때문에 아우터 조인
+ON LIST.DURATION_TYPE = T3.DURATION_TYPE AND T3.CAR_TYPE = '트럭' -- 조인 조건 DURATION_TYPE, CAR_TYPE
+ORDER BY FEE DESC, HISTORY_ID DESC -- 가격 내림차순, 가격이 같다면 기록 아이디 내림차순
+
+
+-- 2
+-- 천재지변으로 인해 일부 데이터가 유실되었습니다.
+-- 입양을 간 기록은 있는데, 보호소에 들어온 기록이 없는
+-- 동물의 ID와 이름을 ID 순으로 조회하는 SQL문을 작성해주세요.
+SELECT T2.ANIMAL_ID, T2.NAME
+FROM ANIMAL_INS AS T1
+RIGHT JOIN ANIMAL_OUTS AS T2
+ON T1.ANIMAL_ID = T2.ANIMAL_ID
+WHERE T1.ANIMAL_ID IS NULL
+ORDER BY T2.ANIMAL_ID
+
+-- 관리자의 실수로 일부 동물의 입양일이 잘못 입력되었습니다.
+-- 보호 시작일보다 입양일이 더 빠른 동물의 아이디와 이름을 조회하는 SQL문을 작성해주세요.
+-- 이때 결과는 보호 시작일이 빠른 순으로 조회해야합니다.
+SELECT INS.ANIMAL_ID, INS.NAME
+FROM ANIMAL_INS AS INS
+JOIN ANIMAL_OUTS AS OUTS
+ON INS.ANIMAL_ID = OUTS.ANIMAL_ID
+WHERE INS.DATETIME > OUTS.DATETIME
+ORDER BY INS.DATETIME
+
+-- 아직 입양을 못 간 동물 중, 가장 오래 보호소에 있었던 동물 3마리의 이름과
+--  보호 시작일을 조회하는 SQL문을 작성해주세요.
+--  이때 결과는 보호 시작일 순으로 조회해야 합니다.
+SELECT INS.NAME, INS.DATETIME
+FROM ANIMAL_INS AS INS
+LEFT JOIN ANIMAL_OUTS AS OUTS
+ON INS.ANIMAL_ID = OUTS.ANIMAL_ID
+WHERE OUTS.DATETIME IS NULL
+ORDER BY INS.DATETIME
+LIMIT 3
+
+-- MEMBER_PROFILE와 REST_REVIEW 테이블에서
+-- 리뷰를 가장 많이 작성한 회원의 리뷰들을 조회하는 SQL문을 작성해주세요.
+-- 회원 이름, 리뷰 텍스트, 리뷰 작성일이 출력되도록 작성해주시고,
+-- 결과는 리뷰 작성일을 기준으로 오름차순,
+-- 리뷰 작성일이 같다면 리뷰 텍스트를 기준으로 오름차순 정렬해주세요.
+SELECT PROFILE.MEMBER_NAME, REVIEW.REVIEW_TEXT, DATE_FORMAT(REVIEW.REVIEW_DATE, "%Y-%m-%d") AS REVIEW_DATE
+FROM MEMBER_PROFILE AS PROFILE
+INNER JOIN -- 프로필과 리뷰 정보 다 필요해서 JOIN
+(
+    SELECT *
+    FROM REST_REVIEW
+    WHERE MEMBER_ID IN ( -- 가장 많은 리뷰 수를 가지고 있는 멤버들만 뽑음
+        SELECT MEMBER_ID -- 멤버 아이디만 나옴
+        FROM REST_REVIEW
+        GROUP BY MEMBER_ID
+        HAVING COUNT(*) = ( -- 멤버 아이디 별로 그룹지었을 때, 그 리뷰 개수가 최대인 멤버만 뽑기
+            -- 가장 많은 리뷰가 몇 개인지 뽑기
+            SELECT COUNT(*)
+            FROM REST_REVIEW
+            GROUP BY MEMBER_ID
+            ORDER BY COUNT(*) desc
+            LIMIT 1
+        )
+    )
+) AS REVIEW
+ON PROFILE.MEMBER_ID = REVIEW.MEMBER_ID
+ORDER BY REVIEW_DATE, REVIEW.REVIEW_TEXT
+
+-- 7월 아이스크림 총 주문량과 상반기의 아이스크림 총 주문량을 더한 값이
+-- 큰 순서대로 상위 3개의 맛을 조회하는 SQL 문을 작성해주세요.
+SELECT FH.FLAVOR
+FROM FIRST_HALF AS FH
+JOIN
+(
+    SELECT FLAVOR, SUM(TOTAL_ORDER) AS TOTAL_ORDER
+    FROM JULY
+    GROUP BY FLAVOR
+) AS JULY
+ON FH.FLAVOR = JULY.FLAVOR
+ORDER BY FH.TOTAL_ORDER + JULY.TOTAL_ORDER DESC
+LIMIT 3
+
+-- FOOD_PRODUCT와 FOOD_ORDER 테이블에서
+-- 생산일자가 2022년 5월인 식품들의 식품 ID, 식품 이름, 총매출을 조회하는 SQL문을 작성해주세요.
+-- 이때 결과는 총매출을 기준으로 내림차순 정렬해주시고
+-- 총매출이 같다면 식품 ID를 기준으로 오름차순 정렬해주세요.
+SELECT FP.PRODUCT_ID, FP.PRODUCT_NAME, FP.PRICE * FO.TOTAL_AMOUNT AS TOTAL_SALES
+FROM FOOD_PRODUCT AS FP
+JOIN
+(
+    SELECT PRODUCT_ID, SUM(AMOUNT) AS TOTAL_AMOUNT
+    FROM FOOD_ORDER
+    WHERE DATE_FORMAT(PRODUCE_DATE, '%Y-%m-%d') BETWEEN '2022-05-01' AND '2022-05-31'
+    GROUP BY PRODUCT_ID
+) AS FO
+ON FP.PRODUCT_ID = FO.PRODUCT_ID
+ORDER BY TOTAL_SALES DESC, FP.PRODUCT_ID
+
+-- 보호소에서 중성화 수술을 거친 동물 정보를 알아보려 합니다.
+-- 보호소에 들어올 당시에는 중성화1되지 않았지만,
+-- 보호소를 나갈 당시에는 중성화된 동물의 아이디와 생물 종,
+-- 이름을 조회하는 아이디 순으로 조회하는 SQL 문을 작성해주세요.
+SELECT INS.ANIMAL_ID, INS.ANIMAL_TYPE, INS.NAME
+FROM ANIMAL_INS AS INS
+JOIN ANIMAL_OUTS AS OUTS
+ON INS.ANIMAL_ID = OUTS.ANIMAL_ID
+WHERE INS.SEX_UPON_INTAKE NOT LIKE OUTS.SEX_UPON_OUTCOME
+ORDER BY INS.ANIMAL_ID
+
+-- 2021년에 가입한 회원수
+158
+(
+    SELECT COUNT(*)
+    FROM USER_INFO
+    WHERE YEAR(JOINED) = 2021
+)
+
+-- 2021년에 가입한 회원 중 상품을 구매한 회원수
+111
+SELECT COUNT(*)
+FROM ONLINE_SALE AS SALE
+LEFT JOIN
+(
+    SELECT USER_ID
+    FROM USER_INFO
+    WHERE YEAR(JOINED) = 2021
+) AS USERS_2021_JOINED
+ON SALE.USER_ID = USERS_2021_JOINED.USER_ID
+WHERE USERS_2021_JOINED.USER_ID IS NOT NULL
+
+SELECT *,
+(
+    SELECT COUNT(*)
+    FROM USER_INFO
+    WHERE YEAR(JOINED) = 2021
+) AS USERS_2021_JOINED,
+(
+    SELECT COUNT(*)
+    FROM ONLINE_SALE AS SALE
+    LEFT JOIN
+    (
+        SELECT USER_ID
+        FROM USER_INFO
+        WHERE YEAR(JOINED) = 2021
+    ) AS USERS_2021_JOINED
+    ON SALE.USER_ID = USERS_2021_JOINED.USER_ID
+    WHERE USERS_2021_JOINED.USER_ID IS NOT NULL
+) AS USERS_2021_SALE
+FROM USER_INFO
+
+-- 2021년에 가입한 회원 중 상품을 구매한 회원의 아이디만 가져옴
+SELECT SALE.USER_ID
+FROM ONLINE_SALE AS SALE
+LEFT JOIN
+(
+    SELECT USER_ID
+    FROM USER_INFO
+    WHERE YEAR(JOINED) = 2021
+) AS USERS_2021_JOINED
+ON SALE.USER_ID = USERS_2021_JOINED.USER_ID
+WHERE USERS_2021_JOINED.USER_ID IS NOT NULL
+GROUP BY SALE.USER_ID
+
+
+-- 유저 아이디, 년, 월, 2021년에 가입한 유저수, 2021년에 가입한 유저중 상품을 산 유저수, 전체 유저수
+SELECT USER_ID, YEAR(SALES_DATE) AS YEAR, MONTH(SALES_DATE) AS MONTH,
+(
+    SELECT COUNT(*)
+    FROM USER_INFO
+    WHERE YEAR(JOINED) = 2021
+) AS USERS_2021_JOINED,
+(
+    SELECT COUNT(*)
+    FROM ONLINE_SALE AS SALE
+    LEFT JOIN
+    (
+        SELECT USER_ID
+        FROM USER_INFO
+        WHERE YEAR(JOINED) = 2021
+    ) AS USERS_2021_JOINED
+    ON SALE.USER_ID = USERS_2021_JOINED.USER_ID
+    WHERE USERS_2021_JOINED.USER_ID IS NOT NULL
+) AS USERS_2021_JOINED_SALES,
+(
+    SELECT COUNT(*)
+    FROM USER_INFO
+) AS TOTAL_USER_COUNT
+FROM ONLINE_SALE
+WHERE USER_ID IN
+(
+    SELECT SALE.USER_ID
+    FROM ONLINE_SALE AS SALE
+    LEFT JOIN
+    (
+        SELECT USER_ID
+        FROM USER_INFO
+        WHERE YEAR(JOINED) = 2021
+    ) AS USERS_2021_JOINED_ID
+    ON SALE.USER_ID = USERS_2021_JOINED_ID.USER_ID
+    WHERE USERS_2021_JOINED_ID.USER_ID IS NOT NULL
+    GROUP BY SALE.USER_ID
+)
+ORDER BY USER_ID
+
+-- 유저 전체수 구하기 200명
+(
+    SELECT COUNT(*)
+    FROM USER_INFO
+    WHERE YEAR(JOINED) = 2021
+)
+
+
+-- 2023/06/27
+-- USER_INFO 테이블과 ONLINE_SALE 테이블에서 2021년에
+-- 가입한 전체 회원들 중 상품을 구매한 회원수와 상품을 구매한
+-- 회원의 비율(=2021년에 가입한 회원 중 상품을 구매한 회원수 / 2021년에 가입한 전체 회원 수)을 년,
+-- 월 별로 출력하는 SQL문을 작성해주세요.
+-- 상품을 구매한 회원의 비율은 소수점 두번째자리에서 반올림하고,
+-- 전체 결과는 년을 기준으로 오름차순 정렬해주시고 년이 같다면 월을 기준으로 오름차순 정렬해주세요.
+-- SELECT
+--     RESULT.YEAR AS YEAR,
+--     RESULT.MONTH AS MONTH,
+--     RESULT.MONTH_SALE_USER_COUNT AS PUCHASED_USERS,
+--     ROUND(RESULT.MONTH_SALE_USER_COUNT / RESULT.TOTAL_USER, 1) AS PUCHASED_RATIO
+--     -- 반올림(X월 구매한 유저수 / 2021년 가입한 유저수, 소수점 2번째자리)
+-- FROM
+-- (
+    -- 년, 월 별 구매한 유저 수, 총 유저 수 가져와서 년, 월로 그룹화
+    SELECT
+        USER_SALE_MONTH.YEAR AS YEAR,
+        USER_SALE_MONTH.MONTH AS MONTH,
+        ROUND(COUNT(USER_SALE_MONTH.USER_ID) / USER_SALE_MONTH.TOTAL_USER, 1) AS PUCHASED_RATIO
+        COUNT(USER_SALE_MONTH.USER_ID) AS PUCHASED_USERS,
+        -- USER_SALE_MONTH.TOTAL_USER AS TOTAL_USER
+    FROM
+    (
+        -- 년, 월, 유저 아이디 별로 그룹화
+        SELECT
+            USER_ID,
+            YEAR(SALES_DATE) AS YEAR,
+            MONTH(SALES_DATE) AS MONTH,
+        (
+            -- 2021년에 가입한 유저수
+            SELECT COUNT(*)
+            FROM USER_INFO
+            WHERE YEAR(JOINED) = 2021
+        ) AS TOTAL_USER
+        FROM ONLINE_SALE
+        WHERE USER_ID IN
+        (
+            -- 2021년에 가입한 유저중 구매한 유저의 아이디만 가져오기
+            SELECT SALE.USER_ID
+            FROM ONLINE_SALE AS SALE
+            JOIN USER_INFO AS USER
+            ON SALE.USER_ID = USER.USER_ID
+            WHERE YEAR(USER.JOINED) = 2021
+            GROUP BY SALE.USER_ID
+        )
+        GROUP BY YEAR, MONTH, USER_ID
+    ) AS USER_SALE_MONTH
+    GROUP BY USER_SALE_MONTH.YEAR, USER_SALE_MONTH.MONTH
+-- ) AS RESULT
+ORDER BY YEAR, MONTH
+
+-- USER_INFO 테이블과 ONLINE_SALE 테이블에서 년, 월, 성별 별로
+-- 상품을 구매한 회원수를 집계하는 SQL문을 작성해주세요.
+-- 결과는 년, 월, 성별을 기준으로 오름차순 정렬해주세요.
+-- 이때, 성별 정보가 없는 경우 결과에서 제외해주세요.
+SELECT
+    YEAR(SALES_DATE) AS YEAR,
+    MONTH(SALES_DATE) AS MONTH,
+    USER.GENDER,
+    COUNT(DISTINCT USER.USER_ID) AS USERS
+FROM USER_INFO AS USER
+INNER JOIN ONLINE_SALE AS SALE
+ON USER.USER_ID = SALE.USER_ID
+WHERE USER.GENDER IS NOT NULL
+GROUP BY YEAR, MONTH, GENDER
+ORDER BY YEAR, MONTH, GENDER
+
+-- 보호소에서는 몇 시에 입양이 가장 활발하게 일어나는지 알아보려 합니다.
+-- 0시부터 23시까지, 각 시간대별로 입양이 몇 건이나 발생했는지 조회하는 SQL문을 작성해주세요.
+-- 이때 결과는 시간대 순으로 정렬해야 합니다.
+SET @HOUR := -1; -- 변수 선언, := -> 대입 연산자, 초기값이 -1인 이유(시간이 0부터 나와야하기때문에)
+SELECT (@HOUR := @HOUR + 1) AS HOUR,
+    (
+        SELECT COUNT(*)
+        FROM ANIMAL_OUTS
+        WHERE HOUR(DATETIME) = @HOUR
+    ) AS COUNT
+FROM ANIMAL_OUTS
+WHERE @HOUR < 23
