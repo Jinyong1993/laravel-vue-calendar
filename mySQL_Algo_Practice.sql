@@ -889,3 +889,552 @@ SELECT (@HOUR := @HOUR + 1) AS HOUR,
     ) AS COUNT
 FROM ANIMAL_OUTS
 WHERE @HOUR < 23
+
+
+
+
+
+-- 2023/06/27
+-- Algo
+-- 수많은 마라톤 선수들이 마라톤에 참여하였습니다.
+-- 단 한 명의 선수를 제외하고는 모든 선수가 마라톤을 완주하였습니다.
+-- 마라톤에 참여한 선수들의 이름이 담긴 배열 participant와 완주한
+-- 선수들의 이름이 담긴 배열 completion이 주어질 때,
+-- 완주하지 못한 선수의 이름을 return 하도록 solution 함수를 작성해주세요.
+function solution(participant, completion) {
+    var answer = ''
+    completion[completion.length] = '' -- completion이 participant보다 1개 적기때문에 빈 문자를 넣어서
+    var arr1 = participant.sort()
+    var arr2 = completion.sort()
+    for(let i=0; i<arr1.length; i++) {
+        if(arr1[i] != arr2[i]) {
+            answer = arr1[i]
+        }
+    }
+    return answer
+}
+
+function solution($participant, $completion)
+{
+    $completionNameCountMap = []; -- 이름이 몇글자인지 세기위해 (동명이인)
+    foreach($completion as $name) { -- 완주한 사람의 이름을 넣어준다
+        if(!isset($completionNameCountMap[$name])) {
+            $completionNameCountMap[$name] = 0;
+        }
+        $completionNameCountMap[$name]++;
+    }
+
+    foreach($participant as $name) {
+        if(empty($completionNameCountMap[$name])) {
+            return $name;
+        } else {
+            $completionNameCountMap[$name]--;
+        }
+    }
+
+    return false;
+}
+
+function solution(participant, completion) {
+    var completionNameCountMap = {}
+    completion.forEach(name => {
+        if(completionNameCountMap[name] === undefined) {
+            completionNameCountMap[name] = 0
+        }
+        completionNameCountMap[name]++
+    })
+
+    var result = ""
+    participant.forEach(name => {
+        if(completionNameCountMap[name] === undefined || completionNameCountMap[name] === 0) {
+            result = name
+        }
+        completionNameCountMap[name]--
+    })
+
+    return result
+}
+
+-- BIG O (n^2)
+function solution(s1, s2) {
+    var answer = 0;
+    for(let i=0; i<s1.length; i++) {
+        for(let j=0; j<s2.length; j++) {
+            if(s1[i] === s2[j]) {
+                answer++
+            }
+        }
+    }
+    return answer;
+}
+
+--  BIG O (M + N)
+function solution(s1, s2) {
+    var answer = 0;
+    const map = new Map();
+    s1.forEach(item => map.set(item, true))
+    s2.forEach(item => map.has(item) == true ? answer++ : '')
+    return answer;
+}
+
+function solution(s1, s2) {
+    var answer = 0;
+    const set = new Set(s1);
+    s2.forEach(item => set.has(item) == true ? answer++ : '')
+    return answer;
+}
+
+
+
+-- 2023/06/29
+-- 정수 n과 정수 배열 numlist가 매개변수로 주어질 때,
+-- numlist에서 n의 배수가 아닌 수들을 제거한 배열을 return하도록 solution 함수를 완성해주세요.
+function solution(n, numlist) {
+    var answer = [];
+
+    for(let i=0; i<numlist.length; i++) { -- numlist의 길이만큼 반복
+        if(numlist[i] % n == 0) { -- numlist의 i번째의 정수를 n으로 나누어 나머지가 0과 같다면
+            answer.push(numlist[i]) -- numlist 배열의 i번째 인덱스를 참조해 answer 배열안에 넣어준다
+        }
+    }
+
+    return answer;
+}
+
+-- 머쓱이는 직육면체 모양의 상자를 하나 가지고 있는데 이 상자에 정육면체 모양의 주사위를 최대한 많이 채우고 싶습니다.
+-- 상자의 가로, 세로, 높이가 저장되어있는 배열 box와 주사위 모서리의 길이
+-- 정수 n이 매개변수로 주어졌을 때, 상자에 들어갈 수 있는
+-- 주사위의 최대 개수를 return 하도록 solution 함수를 완성해주세요.
+function solution(box, n) {
+    var answer = 0;
+
+    var x = Math.floor(box[0] / n) -- 박스의 가로 길이 / 주사위의 모서리길이 -> 반올림 소수점 다버림
+    var y = Math.floor(box[1] / n) -- 세로
+    var h = Math.floor(box[2] / n) -- 높이
+
+    answer = x * y * h
+    return answer;
+}
+
+-- 정수 배열 numbers가 매개변수로 주어집니다.
+-- numbers의 원소 중 두 개를 곱해 만들 수 있는 최댓값을
+-- return하도록 solution 함수를 완성해주세요.
+function solution(numbers) {
+    var answer = 0;
+    var res = []
+
+    -- 순열
+    for(let i=0; i<numbers.length; i++) { -- numbers의 길이만큼 반복
+        for(let j=0; j<numbers.length; j++) { -- numbers의 길이만큼 반복
+            if(i == j) { -- 패스
+                continue
+            }
+            res.push(numbers[i] * numbers[j]) -- res 배열에 정수끼리 곱한 값을 넣어줌
+        }
+    }
+
+    var s = res.sort((a,b) => a-b) -- 오름차순 정렬
+    answer = s[s.length-1] -- 최대값 리턴
+    return answer;
+}
+
+-- 문자열 my_string이 매개변수로 주어질 때,
+-- my_string 안에 있는 숫자만 골라 오름차순
+-- 정렬한 리스트를 return 하도록 solution 함수를 작성해보세요.
+function solution(my_string) {
+    var answer = [];
+    var numbers = my_string.replace(/[^0-9]/g, '') -- 문자열안 숫자가 아닌거 제거
+    answer = numbers.split('').map(Number).sort((a,b) => a-b) -- 숫자를 배열로 오름차순 정렬
+    return answer;
+}
+
+-- 정수 배열 array가 매개변수로 주어질 때,
+-- 가장 큰 수와 그 수의 인덱스를 담은 배열을 return 하도록 solution 함수를 완성해보세요.
+function solution(array) {
+    var answer = [];
+    var bigNum = 0 -- 큰 수 저장할 변수
+
+    for(let i=0; i<array.length; i++) { -- array의 길이만큼 반복
+        if(bigNum < array[i]) { -- bigNum이 array의 i번째 정수보다 작다면
+            var idx = i -- 인덱스를 저장하고
+            bigNum = array[i] -- 큰 수를 저장
+            answer[0] = bigNum -- 배열안에 넣어줌
+            answer[1] = idx
+        }
+    }
+
+    return answer;
+}
+
+-- 문자열 my_string과 정수 num1, num2가 매개변수로 주어질 때,
+-- my_string에서 인덱스 num1과 인덱스 num2에 해당하는
+-- 문자를 바꾼 문자열을 return 하도록 solution 함수를 완성해보세요.
+function solution(my_string, num1, num2) {
+    var answer = '';
+    var arr = my_string.split('') -- 문자열 배열로
+    var str1 = arr[num1] -- 바꿔줄 인덱스의 문자를 저장 1
+    var str2 = arr[num2] -- 바꿔줄 인덱스의 문자를 저장 2
+    arr.splice(num1, 1, str2) -- (시작위치, 삭제할길이, 바꿀거)
+    arr.splice(num2, 1, str1)
+    answer = arr.join('') -- 문자열로
+    return answer;
+}
+
+-- 우주여행을 하던 머쓱이는 엔진 고장으로 PROGRAMMERS-962 행성에 불시착하게 됐습니다.
+-- 입국심사에서 나이를 말해야 하는데, PROGRAMMERS-962 행성에서는
+-- 나이를 알파벳으로 말하고 있습니다. a는 0, b는 1, c는 2, ..., j는 9입니다.
+-- 예를 들어 23살은 cd, 51살은 fb로 표현합니다.
+-- 나이 age가 매개변수로 주어질 때 PROGRAMMER-962식 나이를 return하도록 solution 함수를 완성해주세요.
+function solution(age) {
+    var answer = '';
+    var arr = age.toString().split('').map(Number) -- age를 문자열로(숫자는 split 안됨) -> 배열로 -> 배열안에 문자를 숫자로
+    var alphabet = [] -- 알파벳 배열 만들어줄 변수
+    var res = []
+    var idx = -1 -- a 는 0 부터 시작하기 때문에 -1로 초기화
+
+    for(let i=97; i<=106; i++) { -- 유니코드 a -> 97, j -> 106 까지 반복
+    -- 키와 값을 가진 오브젝트를 인덱스와 String클래스의 fromCharCode 함수를 활용하여 정수를 유니코드 문자로 변환해 alphabet 배열안에 넣어줌
+        alphabet.push({key:idx += 1, value:String.fromCharCode(i)})
+    }
+
+    for(let i=0; i<arr.length; i++) { -- arr 의 길이 만큼 반복
+        alphabet.forEach(item => { -- alphabet 배열안 오브젝트 반복
+            if(arr[i] == item.key) { -- arr 배열 안 i번째 정수와 item의 key가 같다면
+                res.push(item.value) -- res 배열안에 item의 값을 넣어줌
+            }
+        })
+    }
+
+    answer = res.join('') -- 문자열로 합치기
+    return answer;
+}
+
+-- 2023/06/30
+-- 정수가 담긴 배열 numbers와 문자열 direction가 매개변수로 주어집니다.
+-- 배열 numbers의 원소를 direction방향으로 한 칸씩 회전시킨 배열을 return하도록 solution 함수를 완성해주세요.
+function solution(numbers, direction) {
+    var answer = [];
+    var tmp = '' -- 임시로 저장할 변수
+
+    if(direction == 'right') { -- direction이 right일때
+        tmp = numbers[numbers.length-1] -- 배열의 마지막 값을 저장
+        numbers.pop() -- 배열의 마지막 값을 삭제
+        numbers.unshift(tmp) -- 배열의 첫번째 인덱스에 넣어줌
+    } else {
+        tmp = numbers[0] -- 배열의 첫번째 값을 저장
+        numbers.shift() -- 배열의 첫번째 값을 삭제
+        numbers.push(tmp) -- 배열의 마지막 인덱스에 넣어줌
+    }
+
+    return numbers;
+}
+테스트 1 〉	통과 (0.04ms, 33.4MB)
+테스트 2 〉	통과 (0.04ms, 33.5MB)
+테스트 3 〉	통과 (0.06ms, 33.6MB)
+테스트 4 〉	통과 (0.04ms, 33.6MB)
+테스트 5 〉	통과 (0.04ms, 33.5MB)
+
+-- 정수가 담긴 배열 numbers와 문자열 direction가 매개변수로 주어집니다.
+-- 배열 numbers의 원소를 direction방향으로 한 칸씩 회전시킨 배열을 return하도록 solution 함수를 완성해주세요.
+function solution(numbers, direction) {
+    var answer = [];
+    var tmp = ''
+
+    if(direction == 'left') { -- direction이 left일때
+        for (let i=0; i<numbers.length-1; i++) { -- 배열의 길이 -1 만큼 반복 (+1때문에)
+            tmp = numbers[i+1]
+            numbers[i+1] = numbers[i]
+            numbers[i] = tmp
+        }
+    } else {
+        for (let i=numbers.length-1; i>0; i--) {
+            tmp = numbers[i]
+            numbers[i] = numbers[i-1]
+            numbers[i-1] = tmp
+        }
+    }
+
+    return numbers;
+}
+테스트 1 〉	통과 (0.05ms, 33.4MB)
+테스트 2 〉	통과 (0.05ms, 33.4MB)
+테스트 3 〉	통과 (0.05ms, 33.4MB)
+테스트 4 〉	통과 (0.05ms, 33.4MB)
+테스트 5 〉	통과 (0.05ms, 33.4MB)
+
+-- 머쓱이는 친구들과 369게임을 하고 있습니다.
+-- 369게임은 1부터 숫자를 하나씩 대며 3, 6, 9가 들어가는 숫자는 숫자 대신
+-- 3, 6, 9의 개수만큼 박수를 치는 게임입니다.
+-- 머쓱이가 말해야하는 숫자 order가 매개변수로 주어질 때,
+-- 머쓱이가 쳐야할 박수 횟수를 return 하도록 solution 함수를 완성해보세요.
+function solution(order) {
+    var answer = 0;
+    var arr = order.toString().split('').map(Number)
+
+    for(let i=0; i<arr.length; i++) {
+        if(arr[i] == 0) {
+            continue
+        }
+        if(arr[i] % 3 == 0) {
+            answer++
+        }
+    }
+
+    console.log(arr)
+    return answer;
+}
+
+-- 정수 n이 매개변수로 주어질 때,
+-- n의 약수를 오름차순으로 담은 배열을 return하도록 solution 함수를 완성해주세요.
+function solution(n) {
+    var answer = [];
+
+    for(let i=1; i<=n; i++) {
+        if(n % i == 0) {
+            answer.push(i)
+        }
+    }
+
+    return answer;
+}
+
+-- 정수 num과 k가 매개변수로 주어질 때,
+-- num을 이루는 숫자 중에 k가 있으면 num의 그 숫자가 있는
+-- 자리 수를 return하고 없으면 -1을 return 하도록 solution 함수를 완성해보세요.
+function solution(num, k) {
+    var arr = num.toString().split('').map(Number)
+
+    for(let i=0; i<=arr.length; i++) {
+        if(k == arr[i]) {
+            return i+1
+        }
+    }
+
+    return -1;
+}
+
+-- 영어 대소문자로 이루어진 문자열 my_string이 매개변수로 주어질 때,
+-- my_string을 모두 소문자로 바꾸고 알파벳 순서대로
+-- 정렬한 문자열을 return 하도록 solution 함수를 완성해보세요.
+function solution(my_string) {
+    var answer = '';
+    var arr = []
+
+    for(let i=0; i<my_string.length; i++) {
+        if(my_string[i] == my_string[i].toUpperCase()) {
+            arr.push(my_string[i].toLowerCase())
+        } else {
+            arr.push(my_string[i])
+        }
+    }
+
+    answer = arr.sort().join('')
+    return answer;
+}
+
+-- 약수의 개수가 세 개 이상인 수를 합성수라고 합니다.
+-- 자연수 n이 매개변수로 주어질 때 n이하의 합성수의 개수를 return하도록 solution 함수를 완성해주세요.
+function solution(n) {
+    var answer = 0;
+    var arr = []
+    for(let i=0; i<n; i++) {
+        arr.push({number: i + 1, div: []})
+    }
+
+    arr.forEach(item => {
+        for(let i=1; i<=item.number; i++) {
+            if(item.number % i == 0)
+            item.div.push(i)
+        }
+        if(item.div.length >= 3) {
+            answer++
+        }
+    })
+
+    return answer;
+}
+
+-- 문자열 my_string이 매개변수로 주어집니다.
+-- my_string에서 중복된 문자를 제거하고
+-- 하나의 문자만 남긴 문자열을 return하도록 solution 함수를 완성해주세요.
+function solution(my_string) {
+    var answer = '';
+    var arr = []
+    var set = new Set()
+
+    for(let i=0; i<my_string.length; i++) {
+        set.add(my_string[i])
+    }
+
+    set.forEach(item => {
+        arr.push(item)
+    })
+
+    return answer = arr.join('');
+}
+
+-- 머쓱이는 친구에게 모스부호를 이용한 편지를 받았습니다.
+-- 그냥은 읽을 수 없어 이를 해독하는 프로그램을 만들려고 합니다.
+-- 문자열 letter가 매개변수로 주어질 때,
+-- letter를 영어 소문자로 바꾼 문자열을 return 하도록 solution 함수를 완성해보세요.
+function solution(letter) {
+    var answer = '';
+    var result = []
+    var arr = letter.split(' ')
+    var morse = {
+        '.-': 'a',
+        '-...': 'b',
+        '-.-.': 'c',
+        '-..': 'd',
+        '.': 'e',
+        '..-.': 'f',
+        '--.': 'g',
+        '....': 'h',
+        '..': 'i',
+        '.---': 'j',
+        '-.-': 'k',
+        '.-..': 'l',
+        '--': 'm',
+        '-.': 'n',
+        '---': 'o',
+        '.--.': 'p',
+        '--.-': 'q',
+        '.-.': 'r',
+        '...': 's',
+        '-': 't',
+        '..-': 'u',
+        '...-': 'v',
+        '.--': 'w',
+        '-..-': 'x',
+        '-.--': 'y',
+        '--..': 'z'
+    }
+
+    -- 1
+    for(let i=0; i<arr.length; i++) {
+        for(const [key, value] of Object.entries(morse)) {
+            if(arr[i] == key) {
+                result.push(value)
+            }
+        }
+    }
+
+    -- 2 map
+    for(let i=0; i<arr.length; i++) {
+        result.push(morse[arr[i]])
+    }
+
+    return answer = result.join('');
+}
+
+
+
+-- 2023/07/03
+-- 정수 배열 num_list와 정수 n이 매개변수로 주어집니다.
+-- num_list를 다음 설명과 같이 2차원 배열로 바꿔 return하도록 solution 함수를 완성해주세요.
+-- num_list가 [1, 2, 3, 4, 5, 6, 7, 8] 로 길이가 8이고
+-- n이 2이므로 num_list를 2 * 4 배열로 다음과 같이 변경합니다.
+-- 2차원으로 바꿀 때에는 num_list의 원소들을 앞에서부터 n개씩 나눠 2차원 배열로 변경합니다.
+function solution(num_list, n) {
+    var answer = [];
+    var index = 0
+
+    for(let i=0; i<num_list.length; i++) {
+        if(index == num_list.length) {
+            break
+        }
+        answer[i] = []
+        for(let j=0; j<n; j++) {
+            if(num_list[index] != null) {
+                answer[i][j] = num_list[index]
+                index++
+            }
+        }
+    }
+
+    return answer;
+}
+
+-- 문자열 before와 after가 매개변수로 주어질 때,
+-- before의 순서를 바꾸어 after를 만들 수 있으면 1을,
+-- 만들 수 없으면 0을 return 하도록 solution 함수를 완성해보세요.
+function solution(before, after) {
+    var answer = [];
+    var arr1 = before.split('').sort()
+    var arr2 = after.split('').sort()
+
+    for(let i=0; i<arr1.length; i++) {
+        if(arr1[i] == arr2[i]) {
+            answer = 1
+        } else {
+            return 0
+        }
+    }
+
+    return answer;
+}
+
+-- 1부터 13까지의 수에서, 1은 1, 10, 11, 12, 13 이렇게 총 6번 등장합니다.
+-- 정수 i, j, k가 매개변수로 주어질 때,
+-- i부터 j까지 k가 몇 번 등장하는지 return 하도록 solution 함수를 완성해주세요.
+function solution(start, end, target) {
+    var answer = 0;
+    var arr = []
+
+    for(let i=start; i<=end; i++) {
+        arr.push(i)
+    }
+
+    var union = arr.join('')
+
+    for(let i=0; i<union.length; i++) {
+        if(union[i] == target) {
+            answer ++
+        }
+    }
+
+    return answer;
+}
+
+-- 정수 배열 array와 정수 n이 매개변수로 주어질 때,
+-- array에 들어있는 정수 중 n과 가장 가까운 수를 return 하도록 solution 함수를 완성해주세요.
+function solution(array, n) {
+    var answer
+    var diff
+    var tem
+
+    tem = Math.abs(array[0]-n) -- 처음 비교하기 위해 절대값으로 빼줌(양수를 얻기위해서)
+
+    for(let i=0; i<array.length; i++){
+        diff = Math.abs(array[i]-n) -- 배열의 요소를 빼서 차이를 얻는다
+        if(tem == diff){ -- 비교하기위한 변수와 차이가 같으면
+            answer = answer < array[i] ? answer : array[i] -- array값이 크면 answer 작으면 현재 루프의 요소
+        }
+        if(tem > diff){ -- 현재 루프의 요소가 더 작은값이라면
+            tem = diff -- 차이값을 tem에 넣어주고
+            answer = array[i] -- answer에 현재 루프의 값을 넣어줌
+        }
+    }
+    return answer
+}
+
+-- 외과의사 머쓱이는 응급실에 온 환자의 응급도를 기준으로 진료 순서를 정하려고 합니다.
+-- 정수 배열 emergency가 매개변수로 주어질 때 응급도가 높은 순서대로
+-- 진료 순서를 정한 배열을 return하도록 solution 함수를 완성해주세요.
+function solution(emergency) {
+    const emergencyCopy = JSON.parse(JSON.stringify(emergency))
+    var arr = emergency.sort((a,b) => b-a)
+    var answer = [];
+    var map = {}
+
+    emergency.forEach((value, key) => {
+        map[value] = key + 1
+    })
+
+    emergencyCopy.forEach((value, key) => {
+        answer.push(map[value])
+
+    })
+
+    return answer;
+}
