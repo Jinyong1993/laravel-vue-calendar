@@ -280,6 +280,13 @@ export default {
       ></v-select>
     </div>
 
+    <!-- OAuth google -->
+    <a :href="route('getGoogleAuth')">
+      <v-btn>
+        Googleアカウントでログイン
+      </v-btn>
+    </a>
+
     <!-- アラート -->
     <v-alert
       v-model="success"

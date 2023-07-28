@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\SocialAccountController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -7,6 +8,7 @@ use App\Http\Controllers\ExampleController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\BoardController;
 use App\Http\Controllers\BoardCommentController;
+use App\Http\Controllers\OAuthLoginController;
 
 /*
 |--------------------------------------------------------------------------
@@ -68,3 +70,9 @@ Route::prefix('comment')->name('comment.')->group(function () {
     Route::post('store', [BoardCommentController::class, 'store'])->name('store');
     Route::post('delete', [BoardCommentController::class, 'delete'])->name('delete');
 });
+
+Route::get('getGoogleAuth', [OAuthLoginController::class, 'getGoogleAuth'])->name('getGoogleAuth');
+Route::get('authGoogleCallback', [OAuthLoginController::class, 'authGoogleCallback'])->name('authGoogleCallback');
+
+// Route::get('getGoogleAuth2', [SocialAccountController::class, 'redirectToProvider'])->name('getGoogleAuth2');
+// Route::get('authGoogleCallback2', [SocialAccountController::class, 'handleProviderCallback'])->name('authGoogleCallback2');

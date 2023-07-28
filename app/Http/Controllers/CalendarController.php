@@ -37,7 +37,9 @@ class CalendarController extends Controller
         $time_stamp = strtotime($first_date);
         $last_date = date('Y-m-t', $time_stamp);
 
-        $selects = Event::where('event.user_id', auth()->user()->id)
+        // databaseのユーザーテーブルがおかしくなったため任意の数字、あとで対応する。（auth()->user()->idで取得できなくなってる）
+        //   2023_07_28_035621_prepare_users_table_for_social_authentication これが原因かな
+        $selects = Event::where('event.user_id', 5)
         ->where('event.date_from', '<=', $last_date)
         ->where(function ($query) use($first_date) {
             $query->whereNull('event.date_to')
@@ -213,7 +215,7 @@ class CalendarController extends Controller
     public function myColor(Request $request)
     {
         $query = Tag::select('tag.*')
-        ->where('tag.user_id', auth()->user()->id)
+        ->where('tag.user_id', 5)
         ->get()->all();
 
         return $query;

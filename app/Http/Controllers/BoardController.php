@@ -48,7 +48,7 @@ class BoardController extends Controller
 
     public function getBoardContent(Request $request)
     {
-        $user_id = auth()->user()->id;
+        $user_id = 5;
         $board = Board::find($request->board_id);
         if(!$board){
             return redirect()->route('board.list')->withErrors('処理中にエラーが発生しました。');
