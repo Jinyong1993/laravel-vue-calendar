@@ -9,6 +9,8 @@ use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\BoardController;
 use App\Http\Controllers\BoardCommentController;
 use App\Http\Controllers\OAuthLoginController;
+// 追加
+use App\Http\Controllers\LoginWithGoogleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -76,3 +78,15 @@ Route::get('authGoogleCallback', [OAuthLoginController::class, 'authGoogleCallba
 
 // Route::get('getGoogleAuth2', [SocialAccountController::class, 'redirectToProvider'])->name('getGoogleAuth2');
 // Route::get('authGoogleCallback2', [SocialAccountController::class, 'handleProviderCallback'])->name('authGoogleCallback2');
+
+// 追加
+Route::get("redirectToGoogle", [
+  LoginWithGoogleController::class,
+  "redirectToGoogle",
+])->name('redirectToGoogle');
+
+// 追加
+Route::get("handleGoogleCallback", [
+  LoginWithGoogleController::class,
+  "handleGoogleCallback",
+])->name('handleGoogleCallback');
