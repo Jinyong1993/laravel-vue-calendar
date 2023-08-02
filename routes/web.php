@@ -80,13 +80,13 @@ Route::get('authGoogleCallback', [OAuthLoginController::class, 'authGoogleCallba
 // Route::get('authGoogleCallback2', [SocialAccountController::class, 'handleProviderCallback'])->name('authGoogleCallback2');
 
 // 追加
-Route::get("redirectToGoogle", [
+Route::get("auth/google", [
   LoginWithGoogleController::class,
   "redirectToGoogle",
 ])->name('redirectToGoogle');
 
 // 追加
-Route::get("handleGoogleCallback", [
+Route::get("auth/google/callback", [
   LoginWithGoogleController::class,
   "handleGoogleCallback",
 ])->name('handleGoogleCallback');
