@@ -119,7 +119,7 @@ class CalendarController extends Controller
             $event->text = $request->text;
             $event->date_from = $request->date_from;
             $event->date_to = $request->date_to;
-            $event->user_id = auth()->user()->id;
+            $event->user_id = 5;
             $event->tag_id = $request->tag_id ?? 0;
             $event->repeat_date = $repeat_date ?? null;
             $event->updated_at = date('Y-m-d H:i:s');
@@ -135,7 +135,7 @@ class CalendarController extends Controller
                 'date_to' => $request->date_to,
                 'tag_id' => $request->tag_id,
                 'repeat_date' => $repeat_date ?? null,
-                'user_id' => auth()->user()->id,
+                'user_id' => 5,
                 'updated_at' => date('Y-m-d H:i:s'),
             ]);
         }
@@ -171,7 +171,7 @@ class CalendarController extends Controller
             $tag->tag_name = $request->tag_name;
             $tag->tag_note = $request->tag_note;
             $tag->tag_color = $request->tag_color;
-            $tag->user_id = auth()->user()->id;
+            $tag->user_id = 5;
             $tag->updated_at = date('Y-m-d H:i:s');
             $tag->created_at = date('Y-m-d H:i:s');
             $tag->save();
